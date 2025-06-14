@@ -1,0 +1,38 @@
+name: OpenKore Bot Runner
+
+on:
+  workflow_dispatch:  # Permite executar manualmente
+
+jobs:
+  run-openkore:
+    runs-on: windows-latest  # Usa Windows para rodar o start.exe
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Perl
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: '5.32'  # Versão compatível com OpenKore
+
+      - name: Instalar dependências Perl
+        run: |
+          cpanm IO::Socket::SSL
+          cpanm Encoding::FixLatin
+
+      - name: Substituir credenciais no config.txt
+        run: |
+          (Get-Content "config/config.txt") | 
+          ForEach-Object { $_ -replace '\$ENV\{\''RO_USERNAME''\}', "$env:RO_USERNAME" } | 
+          Set-Content "config/config.txt"
+          (Get-Content "config/config.txt") | 
+          ForEach-Object { $_ -replace '\$ENV\{\''RO_PASSWORD''\}', "$env:RO_PASSWORD" } | 
+          Set-Content "config/config.txt"
+        env:
+          RO_USERNAME: ${{ secrets.RO_USERNAME }}
+          RO_PASSWORD: ${{ secrets.RO_PASSWORD }}
+
+      - name: Executar OpenKore (start.exe)
+        run: start.exe
+        working-directory: ./  # Diretório onde está o executável
+#        timeout-minutes: 30   # Evita execução infinita
