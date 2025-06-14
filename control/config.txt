@@ -4,11 +4,11 @@
 ######## Login options and server-specific options ########
 
 master Latam - ROla: Freya/Nidhogg/Yggdrasil
-server
-username
-password
-loginPinCode
-char
+server 0
+username $ENV{'RO_USERNAME'}
+password $ENV{'RO_PASSWORD'}
+loginPinCode $ENV{'RO_PIN'}
+char 0
 
 # Poseidon Settings: https://openkore.com/wiki/Poseidon
 # They must be the same as Query Server config in Poseidon.txt
@@ -206,7 +206,7 @@ cartMaxWeight 7900
 itemsTakeGreed 0
 itemsCheckWeight 1
 
-lockMap
+lockMap gef_fild06
 lockMap_x
 lockMap_y
 lockMap_randX
@@ -307,7 +307,7 @@ teleportAuto_equip_leftAccessory
 teleportAuto_equip_rightAccessory
 teleportAuto_lostHomunculus
 teleportAuto_useItemForRespawn
-teleportAuto_item1 Asa de Mosca de Iniciante
+teleportAuto_item1
 teleportAuto_item2
 
 dealAuto 1
@@ -439,16 +439,20 @@ doCommand {
 	manualAI 0
 }
 
+attackSkillSlot RG_STEALCOIN {
+	lvl 10
+	sp > 15
+	maxAttempts 5          # Número máximo de tentativas de Furtar por monstro
+	maxUses 1
+	dist 1
+	timeout 1
+}
+
 useSelf_item [Evento] Poção de Aprendiz,Poção para Aprendizes {
 	hp < 70%
 	whenStatusInactive
 	notWhileSitting 1
 	timeout 0
-}
-useSelf_item Asa de Mosca de Iniciante,Asa de Mosca {
-	hp < 25%
-	timeout 5
-	whenStatusInactive
 }
 
 ######## Autostorage/autosell ########
