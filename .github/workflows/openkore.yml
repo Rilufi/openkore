@@ -31,8 +31,9 @@ jobs:
         env:
           RO_USERNAME: ${{ secrets.RO_USERNAME }}
           RO_PASSWORD: ${{ secrets.RO_PASSWORD }}
+          RO_PIN: ${{ secrets.RO_PIN }}
 
       - name: Executar OpenKore (start.exe)
         run: start.exe
         working-directory: ./  # Diretório onde está o executável
-#        timeout-minutes: 30   # Evita execução infinita
+        timeout-minutes: 30   # Evita execução infinita
