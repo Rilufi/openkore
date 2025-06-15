@@ -38,4 +38,4 @@ jobs:
       - name: Executar OpenKore
         run: perl openkore.pl
         working-directory: ./
-        timeout-minutes: 30
+  #      timeout-minutes: 30
