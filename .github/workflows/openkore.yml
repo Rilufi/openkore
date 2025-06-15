@@ -38,7 +38,8 @@ jobs:
           RO_PASSWORD: ${{ secrets.RO_PASSWORD }}
           RO_PIN: ${{ secrets.RO_PIN }}
 
-      - name: Executar OpenKore
-        run: start.exe
-        working-directory: ./  # Caminho onde está o OpenKore
+      - name: Rodar o OpenKore via Perl
+        run: perl openkore.pl
+        working-directory: ./  # Diretório onde está o openkore.pl
         timeout-minutes: 30
+
