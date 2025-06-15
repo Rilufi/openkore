@@ -1,24 +1,24 @@
 name: OpenKore Bot Runner
 
 on:
-  workflow_dispatch:  # Permite execução manual
+  workflow_dispatch:
 
 jobs:
   run-openkore:
-    runs-on: ubuntu-latest  # Ambiente Linux evita DLLs
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
 
-      - name: Instalar Perl e dependências
+      - name: Instalar Perl e dependências mínimas
         run: |
           sudo apt update
           sudo apt install -y perl cpanminus libio-socket-ssl-perl libencoding-fixlatin-perl
           cpanm IO::Socket::SSL
           cpanm Encoding::FixLatin
 
-      - name: Substituir credenciais no config.txt
+      - name: Substituir variáveis no config.txt
         run: |
           sed -i "s/\$ENV{RO_USERNAME}/${RO_USERNAME}/g" control/config.txt
           sed -i "s/\$ENV{RO_PASSWORD}/${RO_PASSWORD}/g" control/config.txt
@@ -28,7 +28,7 @@ jobs:
           RO_PASSWORD: ${{ secrets.RO_PASSWORD }}
           RO_PIN: ${{ secrets.RO_PIN }}
 
-      - name: Executar OpenKore
+      - name: Executar OpenKore em Perl puro
         run: perl openkore.pl
-        working-directory: ./  # ajuste se o script estiver em outro diretório
+        working-directory: ./  # Ajuste conforme estrutura do repositório
         timeout-minutes: 30
