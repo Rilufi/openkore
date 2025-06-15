@@ -15,7 +15,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y perl cpanminus libio-socket-ssl-perl libencoding-fixlatin-perl \
-            libreadline-dev libncurses-dev make gcc python3
+            libreadline-dev libncurses-dev libcurl4-openssl-dev make gcc python3
 
       - name: Instalar módulos Perl necessários
         run: |
@@ -32,7 +32,7 @@ jobs:
           RO_PASSWORD: ${{ secrets.RO_PASSWORD }}
           RO_PIN: ${{ secrets.RO_PIN }}
 
-      - name: Compilar XSTools com scons (a partir da raiz)
+      - name: Compilar XSTools com scons
         run: python3 src/scons-local-*/scons.py
 
       - name: Executar OpenKore
