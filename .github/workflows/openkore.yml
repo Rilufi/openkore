@@ -11,10 +11,14 @@ jobs:
       - name: Checkout do código
         uses: actions/checkout@v4
 
-      - name: Instalar Perl e dependências para build
+      - name: Instalar dependências do sistema
         run: |
           sudo apt update
-          sudo apt install -y perl cpanminus libio-socket-ssl-perl libencoding-fixlatin-perl libreadline-dev libncurses-dev make gcc
+          sudo apt install -y perl cpanminus libio-socket-ssl-perl libencoding-fixlatin-perl \
+            libreadline-dev libncurses-dev make gcc python3
+
+      - name: Instalar módulos Perl necessários
+        run: |
           cpanm IO::Socket::SSL
           cpanm Encoding::FixLatin
 
@@ -28,13 +32,13 @@ jobs:
           RO_PASSWORD: ${{ secrets.RO_PASSWORD }}
           RO_PIN: ${{ secrets.RO_PIN }}
 
-      - name: Compilar XSTools (opcional)
+      - name: Compilar XSTools com scons
         run: |
           cd src
-          perl scons.pl
+          python3 scons-local-*/scons.py
           cd ..
 
       - name: Executar OpenKore
         run: perl openkore.pl
-        working-directory: ./  # ou ajuste se necessário
+        working-directory: ./
         timeout-minutes: 30
