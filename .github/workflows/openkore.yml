@@ -22,12 +22,15 @@ jobs:
 
       - name: Substituir credenciais no config.txt
         run: |
-          (Get-Content "config/config.txt") | 
+          (Get-Content "https://raw.githubusercontent.com/Rilufi/openkore/refs/heads/master/control/config.txt") | 
           ForEach-Object { $_ -replace '\$ENV\{\''RO_USERNAME''\}', "$env:RO_USERNAME" } | 
-          Set-Content "config/config.txt"
-          (Get-Content "config/config.txt") | 
+          Set-Content "https://raw.githubusercontent.com/Rilufi/openkore/refs/heads/master/control/config.txt"
+          (Get-Content "https://raw.githubusercontent.com/Rilufi/openkore/refs/heads/master/control/config.txt") | 
           ForEach-Object { $_ -replace '\$ENV\{\''RO_PASSWORD''\}', "$env:RO_PASSWORD" } | 
-          Set-Content "config/config.txt"
+          Set-Content "https://raw.githubusercontent.com/Rilufi/openkore/refs/heads/master/control/config.txt"
+          (Get-Content "https://raw.githubusercontent.com/Rilufi/openkore/refs/heads/master/control/config.txt") | 
+          ForEach-Object { $_ -replace '\$ENV\{\''RO_PIN''\}', "$env:RO_PIN" } | 
+          Set-Content "https://raw.githubusercontent.com/Rilufi/openkore/refs/heads/master/control/config.txt"
         env:
           RO_USERNAME: ${{ secrets.RO_USERNAME }}
           RO_PASSWORD: ${{ secrets.RO_PASSWORD }}
