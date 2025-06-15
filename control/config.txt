@@ -522,3 +522,6 @@ logToFile_Messages
 logToFile_Warnings
 history_max 50
 macro_orphans terminate
+eventMacro 1
+eventMacrosFile "control/eventMacros_rogue.txt"
+
