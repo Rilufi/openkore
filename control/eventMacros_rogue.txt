@@ -1,0 +1,4704 @@
+﻿###Adicionei +30 em todas as prioridades para evitar um bug de prioridade negativa###
+
+###Adicionar as seguintes linhas no config.txt###
+#macro_orphans
+#membroDoEden
+#quest_eden
+#quest_atual
+#fazerQuestEden
+#current_npc
+#versao_eventmacro_up_todas_as_classes_bro
+#questc2_implementada
+#questc3_implementada
+#saveMap_sequenciaPraArmazenar
+#saveMap_desejado
+#saveMap_posicaoKafra
+#saveMap_posicaoNpcVenda
+#saveMap_posicaoNpcPraPocao
+#o_que_estou_fazendo
+#naSequenciaDeSalvamento
+#PoçãoDeVelocidade
+#virarClasse2
+
+
+automacro versao {
+    BaseLevel > 0
+    priority 1 #sempre a primeira a ser executada
+    exclusive 1
+    run-once 1
+    call {
+        [
+        log =================================================================
+        log   EventMacrosBR / up_1_ao_99_todas_classes-bro
+        log   Versão: OK versao_indefinida
+        log   https://github.com/eventMacrosBR/up_1_ao_99_todas_classes-bro
+        log   Em caso de duvidas digite:
+        log   eventMacro ajuda
+        log =================================================================
+        ]
+        do conf -f versao_eventmacro_up_todas_as_classes_bro OK versao_indefinida
+    }
+}
+
+sub configurarBuild {
+    my %configsBuild = (
+        skillsAprendiz => 'NV_BASIC 9',
+        skillsClasse1 => ' TF_MISS 10, TF_DOUBLE 10, TF_POISON 3, TF_DETOXIFY 1, TF_STEAL 10, TF_HIDING 10, TF_POISON 8',
+        skillsClasse2 => 'RG_SNATCHER 10, RG_STEALCOIN 10, RG_BACKSTAP 4, RG_TUNNELDRIVE 5, RG_RAID 5, RG_INTIMIDATE 5, RG_PLAGIARISM 10',
+        skillsClasse1T => 'TF_MISS 10, TF_DOUBLE 10, TF_POISON 3, TF_DETOXIFY 1, TF_STEAL 10, TF_HIDING 10, TF_POISON 8',
+        skillsClasse2T => 'RG_SNATCHER 10, RG_STEALCOIN 10, SM_SWORD 10, RG_BACKSTAP 8, RG_TUNNELDRIVE 5, ST_CHASEWALK 5, RG_RAID 5, RG_INTIMIDATE 5, RG_PLAGIARISM 10, ST_PRESERVE 1',
+        skillsClasse3 => '-1',
+        statsPadrao => '40 dex, 20 agi, 10 str, 50 dex, 42 agi, 30 str, 50 agi, 40 str, 60 dex, 60 agi, 70 dex, 78 agi, 60 str, 92 agi, 70 str, 9 vit',
+        statsPadraoTransclasse => '40 dex, 20 agi, 10 str, 50 dex, 42 agi, 30 str, 50 agi, 40 str, 60 dex, 60 agi, 70 dex, 78 agi, 60 str, 94 agi, 70 str, 99 agi',
+        statsPadraoClasse3 => 'dex 90, agi 120, str 90',
+        lvlClasseParaVirarClasse2 => '50',
+        lvlClasseParaVirarClasse2T => '50'
+    );
+    return \%configsBuild;
+}
+
+sub extrairMapasDeUp {
+    my ($lvl, $souTransclasse) = @_;
+    my $variaveisDeUp;
+    
+    #########################################################################
+    #AQUI É DEFINIDO OS MAPAS QUE CADA CLASSE IRÁ UPAR, DE MODO
+    #QUE SEJA EXTREMAMENTE FÁCIL DE ALTERAR A SEU GOSTO
+    ########################################################################
+
+    if ($souTransclasse eq "nao") {
+        $variaveisDeUp =
+        # AQUI SÃO OS MAPAS DE UP ATÉ 99, ANTES DE REBORNAR
+            [
+            {lvlMin => 1 , lvlMax => 12, lockMap => 'prt_fild06', saveMap => 'prontera'},
+            {lvlMin => 13, lvlMax => 20, lockMap => 'pay_fild08', saveMap => 'payon'},
+	        {lvlMin => 21, lvlMax => 27, lockMap => 'pay_dun00', saveMap => 'payon'},		
+            {lvlMin => 28, lvlMax => 35, lockMap => 'pay_fild07',  saveMap => 'payon'},
+            {lvlMin => 36, lvlMax => 48, lockMap => 'iz_dun00', saveMap => 'izlude'},
+            {lvlMin => 49, lvlMax => 55, lockMap => 'iz_dun02', saveMap => 'izlude'},
+            {lvlMin => 56, lvlMax => 70, lockMap => 'moc_fild17', saveMap => 'morocc'},
+            {lvlMin => 71, lvlMax => 85, lockMap => 'mjolnir_11', saveMap => 'prontera'},
+            {lvlMin => 86, lvlMax => 94, lockMap => 'lou_fild01', saveMap => 'louyang'},
+			{lvlMin => 95, lvlMax => 98, lockMap => 'gef_fild06',  saveMap => 'geffen'}
+        ];
+    } else {
+        $variaveisDeUp =
+        # AQUI SÃO OS MAPAS DE UP ATÉ 99, DEPOIS DE REBORNAR
+            [
+            {lvlMin => 1 , lvlMax => 12, lockMap => 'prt_fild06', saveMap => 'prontera'},
+            {lvlMin => 13, lvlMax => 20, lockMap => 'pay_fild08', saveMap => 'payon'},
+	        {lvlMin => 21, lvlMax => 27, lockMap => 'pay_dun00', saveMap => 'payon'},		
+            {lvlMin => 28, lvlMax => 35, lockMap => 'pay_fild07',  saveMap => 'payon'},
+            {lvlMin => 36, lvlMax => 52, lockMap => 'moc_fild03', saveMap => 'payon'},
+            {lvlMin => 53, lvlMax => 70, lockMap => 'moc_fild17', saveMap => 'morocc'},
+            {lvlMin => 71, lvlMax => 85, lockMap => 'mjolnir_11', saveMap => 'prontera'},
+            {lvlMin => 86, lvlMax => 94, lockMap => 'gef_fild08', saveMap => 'geffen'},
+			{lvlMin => 95, lvlMax => 98, lockMap => 'gef_fild06',  saveMap => 'geffen'}
+        ];
+    }
+    
+    
+    foreach my $configs (@{$variaveisDeUp}) {
+        #mensagem para debug
+        #warning "lvl min: " . $configs->{lvlMin}.' '. "lvl max: " . $configs->{lvlMax}."\n";
+        if ($configs->{lvlMin} <= $lvl && $lvl <= $configs->{lvlMax}) {  #checa em qual "grupo" (de lvlMin e lvlMax) seu nivel se encaixa
+            my %hash = (lockMap => $configs->{lockMap}, saveMap => $configs->{saveMap});
+            return \%hash;
+        }
+    }
+}
+
+sub inicializarParametrosQuestClasseRenascer {
+    my %parametrosQuestClasseRenascer = (
+        renascer => 'não',
+        amigo => '',
+        #observação sobre o ponto de encontro:
+        #só poderá ser as coordenadas, não coloque nome de cidade aqui, senão é treta
+        #a cidade sempre será obrigatoriamente em juno, já que o reborn se passa por lá
+        #altere a coordenada a seu prazer, fique a vontade
+        pontoDeEncontroX => '145..147',
+        pontoDeEncontroY => '115..117'
+    );
+    return \%parametrosQuestClasseRenascer;
+}
+
+sub inicializarParametrosClasses {
+    return {
+        idC1 => 6,
+        idBC1 => 4029,
+        idC2 => 17,
+        idC2Alt => -1,
+        idBC2 => 4040,
+        idBC2Alt => -1,
+        idC1T => 4007,
+        idC2T => 4018,
+        idC2TAlt => -1,
+        idC3 => 4072,
+        idC3Alt => -1,
+        idBC3 => 4108,
+        idBC3Alt => -1
+    }
+}
+
+sub inicializarPlugins {
+}
+
+sub inicializarParametrosQuestClasse1 {
+    #nome do hash: %parametrosQuestClasse1
+    return {
+        nomeClasse => 'gatuno',
+        npc => '42 133',
+        mapa => 'moc_prydb1',
+        precisaMover => 'sim',
+        sequenciaConversa => 'r1 r1',
+        equipeIniciante => 13041
+    }
+}
+
+sub inicializarParametrosQuestClasse1T {
+    #nome do hash: %parametrosQuestClasse1T
+    return {
+        npc => '39 129',
+        mapa => 'moc_prydb1',
+        sequenciaConversa => '',
+        equipeIniciante => 13041
+    }
+}
+
+sub inicializarParametrosQuestClasse2 {
+    my ($manterOuGuardar) = @_;
+    my %items = (
+    510 => "7 1 0", #ervaAzul
+    957 => "10 1 0", #unhaApodrecida
+    932 => "10 1 0", #osso
+    958 => "10 1 0" #mandibula
+    );
+    Commands::run("conf -f questc2_implementada true");
+    foreach $key (keys %items) {
+        if ($manterOuGuardar eq "manter") {
+            Commands::run("iconf $key $items{$key}")
+        } else {
+            Commands::run("iconf $key 0 1 0")
+        }
+    }
+}
+
+sub inicializarParametrosQuestClasse2T {
+    #nome do hash: %parametrosQuestClasse2T
+    return {
+        Npc => '53 58'
+    }
+}
+
+sub inicializarParametrosQuestClasse3 {
+    Commands::run("conf -f questc3_implementada false");
+}
+
+sub inicializarParametrosQuestEden {
+    #nome do hash: %parametrosQuestEden
+    return {
+        armaLevel26e40 => 'adaga',
+        armaLevel60 => 'adaga',
+        IDarmaIniciante => 13050,
+        IDarmaIntermediario => 13051,
+        IDarmaEden => 13066
+    }
+}
+
+automacro configurarFurto {
+    SkillLevel TF_STEAL = 10
+    JobID $parametrosClasses{idC1}, $parametrosClasses{idBC1}
+    ConfigKeyNot attackSkillSlot_1 TF_STEAL
+    exclusive 1
+    call {
+        [
+        log ===========================================
+        log =Já tenho a skill Furto no 10,
+        log =Configurando pra usar ela
+        log ===========================================
+        ]
+        $blocoExiste = checarSeExisteNoConfig("attackSkillSlot_1")
+        if ( $blocoExiste = nao ) {
+            adicionaAttackSkillSlot()
+            pause 1
+            do reload config
+        }
+        do conf attackSkillSlot_1 TF_STEAL
+        do conf attackSkillSlot_1_lvl 10
+        do conf attackSkillSlot_1_sp >= 10
+        do conf attackSkillSlot_1_whenStatusInactive EFST_POSTDELAY
+        do conf attackSkillSlot_1_maxUses 1
+        do conf attackSkillSlot_1_maxAttempts 2
+        do conf attackSkillSlot_1_disabled 0
+    }
+}
+
+automacro desabilitarFurto {
+    SkillLevel RG_SNATCHER = 10
+    exclusive 1
+    ConfigKey attackSkillSlot_1 TF_STEAL
+    call {
+        [
+        log ===================================
+        log = Já tenho Mãos Leves, desabilitando
+        log = o furto de gatuno
+        log ===================================
+        ]
+        
+        
+        do conf attackSkillSlot_1 none
+    }
+}
+
+automacro configurarDesintoxicar {
+    SkillLevel TF_DETOXIFY 1
+    ConfigKeyNot useSelf_skill_0 TF_DETOXIFY
+    exclusive 1
+    call {
+        [
+        log ===========================================
+        log =Já tenho a skill Desintoxicar,
+        log =Configurando ela
+        log ===========================================
+        ]
+        $blocoExiste = checarSeExisteNoConfig("useSelf_skill_0")
+        if ($blocoExiste = nao ) {
+            adicionaUseSelfSkill()
+            pause 1
+            do reload config
+        }
+        do conf useSelf_skill_0 TF_DETOXIFY
+        do conf useSelf_skill_0_lvl 1
+        do conf useSelf_skill_0_sp >= 10
+        do conf useSelf_skill_0_whenStatusActive HEALTHSTATE_POISON, EFST_HEALTHSTATE_POISON
+        do conf useSelf_skill_0_disabled 0
+  }
+}
+
+automacro configurarAfanar {
+  SkillLevel RG_STEALCOIN = 10
+  ConfigKeyNot attackSkillSlot_1 RG_STEALCOIN
+  exclusive 1
+    call {
+        $blocoExiste = checarSeExisteNoConfig("attackSkillSlot_1")
+        if ($blocoExiste = nao ) {
+            adicionaAttackSkillSlot()
+            pause 1
+            do reload config
+        }
+        [
+        log ===========================================
+        log =Já tenho a skill Afanar no 10,
+        log =Configurando pra usar ela
+        log ===========================================
+        ]
+        do conf attackSkillSlot_1 RG_STEALCOIN
+        do conf attackSkillSlot_1_lvl 10
+        do conf attackSkillSlot_1_sp >= 15
+        do conf attackSkillSlot_1_whenStatusInactive EFST_POSTDELAY
+        do conf attackSkillSlot_1_maxUses 1
+        do conf attackSkillSlot_1_maxAttempts 1
+        do conf attackSkillSlot_1_disabled 0
+    }
+}
+
+automacro configurarPotLaranja {
+    InInventoryID 569 < 1 #Poção de Aprendiz (não pode ter essa poção)
+    InStorageID 569 < 1 #Poção de Aprendiz (não pode ter essa poção)
+    Zeny > 30000
+    BaseLevel != 99
+    JobIDNot 0 #aprendiz
+    JobIDNot 4023 # baby aprendiz
+    ConfigKey quest_skill none
+    ConfigKey questRenascer_estagio none
+    ConfigKeyNot useSelf_item_1 Poção de Aprendiz #só se ativa quando nao ta usando mais pot aprendiz
+    ConfigKeyNot useSelf_item_1 Poção Laranja
+    exclusive 1
+    call {
+        [
+        log ===================================
+        log = configurando poção laranja
+        log ===================================
+        ]
+        if (&invamount(569) > 0 || &storamount(569) > 0) {
+            [
+            log ===================================
+            log = um bug ocorreu
+            log = a eventMacro está tentando desativar as pot aprendiz
+            log = mas ainda tenho um pouco delas
+            log = tenho &invamount(569) no inventário
+            log = e tenho &storamount(569) no storage
+            log = então vou continuar usando
+            log = reativando useSelf_item Poção de Aprendiz
+            log ===================================
+            ]
+            do conf useSelf_item_1 Poção de Aprendiz
+            do conf useSelf_item_1_disabled 0
+            do conf useSelf_item_1_hp < 60%
+            do conf getAuto_0 Poção de Aprendiz
+            do conf getAuto_0_minAmount 20
+            do conf getAuto_0_maxAmount 200
+            do conf getAuto_0_passive 0
+            stop
+        }
+        do iconf 502 60 0 0 #pot laranja
+        if (&config(buyAuto_1) = Poção Laranja ) {
+            log pot Laranja já está configurada, essa mensagem não deveria aparecer
+            log caso apareça repetidamente, relate aos criadores da macro
+        } else {
+            adicionaBuyAuto() #preciso adicionar um bloco novo, porque o bloco
+            #de buyauto padrão não tem o "zeny" como chave, apesar que deveria
+            pause 1
+            do reload config
+
+            do conf buyAuto_1 Poção Laranja
+            do conf buyAuto_1_minAmount 10
+            do conf buyAuto_1_maxAmount 60
+            do conf buyAuto_1_zeny > 30000
+            do conf buyAuto_1_npc payon_in01 5 49
+            do conf buyAuto_1_disabled 0
+        }
+        $blocoExiste = checarSeExisteNoConfig("useSelf_item_1")
+        if ( $blocoExiste = nao ) {
+            adicionaUseSelfItem()
+            pause 1
+            do reload config
+        }
+        do conf useSelf_item_1 Poção Laranja
+        do conf useSelf_item_1_hp < 50%
+        do conf useSelf_item_1_disabled 0
+
+        [
+        log ========================================
+        log Configação para usar e comprar Poção Laranja
+        log feita com sucesso
+        log ========================================
+        ]
+    }
+}
+
+#só vai reabilitar o buyAuto se não tiver fazendo nada!!!
+#upando ou coisa assim
+automacro reabilitarBuyAuto {
+    BaseLevel != 99
+    ConfigKeyNot quest_eden em_curso
+    ConfigKeyNot quest_eden terminando
+    ConfigKeyNot naSequenciaDeSalvamento true
+    ConfigKeyNot virarClasse2 true
+    ConfigKeyNot virarClasse2T true
+    ConfigKeyNot quest_skill true
+    ConfigKeyNot esperarFazerQuest true
+    ConfigKey aeroplano1 none
+    ConfigKey aeroplano2 none
+    ConfigKey questRenascer_estagio none
+    exclusive 1
+    JobIDNot 0 #Ou o campo de treinamento fica louco
+    JobIDNot 4023 #Baby Aprendiz
+    ConfigKey buyAuto_1 Poção Laranja
+    ConfigKeyNot buyAuto_1_disabled 0
+    call {
+        do conf buyAuto_1_disabled 0
+    }
+}
+
+automacro campoDeAprendiz_apagarVariaveis {
+    JobIDNot 0
+    JobIDNot 4023
+    exclusive 1
+    ConfigKey quest_atual todas_completadas
+    call {
+        do conf quest_atual none
+        do conf current_npc none
+    }
+}
+
+automacro inicializar {
+    run-once 1
+    priority 2 #pioridade alta, sempre vai ser a segunda a executar
+    exclusive 1
+    BaseLevel > 0
+    call {
+        # Carregando Plugins necessários
+        inicializarPlugins()
+        
+        # Configurações de Ids de classe
+        
+        # Esse sub gera a hash %parametrosClasses com as seguintes keys:
+        # parametrosClasses{idC1}
+        # parametrosClasses{idC2}
+        # parametrosClasses{idC1T}
+        # parametrosClasses{idC2T}
+        # parametrosClasses{idC3}
+        %parametrosClasses = inicializarParametrosClasses()
+
+        # Configurações Gerais de Build
+        
+        # Esse sub gera as hash %configsBuild com as seguintes keys:
+        # $configsBuild{skillsAprendiz}
+        # $configsBuild{skillsClasse1}
+        # $configsBuild{skillsClasse2}
+        # $configsBuild{skillsClasse1T}
+        # $configsBuild{skillsClasse2T}
+        # $configsBuild{skillsClasse3}
+        # $configsBuild{statsPadrao}
+        %configsBuild = configurarBuild()
+
+        # Configurações Quests
+        
+        # Esse sub gera a hash %parametrosQuestEden com as seguintes keys:
+        # $parametrosQuestEden{armaLevel26e40}
+        # $parametrosQuestEden{armaLevel60}
+        %parametrosQuestEden = inicializarParametrosQuestEden()
+        
+        # Esse sub gera a hash %parametrosQuestClasse1 com as seguintes keys:
+        # $parametrosQuestClasse1{nomeClasse}
+        # $parametrosQuestClasse1{npc}
+        # $parametrosQuestClasse1{mapa}
+        # $parametrosQuestClasse1{precisaMover}
+        # $parametrosQuestClasse1{sequenciaConversa}
+        # $parametrosQuestClasse1{equipeIniciante}
+        %parametrosQuestClasse1 = inicializarParametrosQuestClasse1()
+        
+        # Esse sub gera a hash %parametrosQuestClasse1T com as seguintes keys:
+        # $parametrosQuestClasse1T{nomeClasse}
+        # $parametrosQuestClasse1T{npc}
+        # $parametrosQuestClasse1T{mapa}
+        # $parametrosQuestClasse1T{sequenciaConversa}
+        # $parametrosQuestClasse1T{equipeIniciante}
+        %parametrosQuestClasse1T = inicializarParametrosQuestClasse1T()
+        
+        # Esse sub configura os itens da quest de classe 2 (para não vender nem guardar)
+        if (pegarID() ~ $parametrosClasses{idC1}, 0, 4023 ) {
+            inicializarParametrosQuestClasse2("manter")
+            #Se o personagem for classe 1, então queremos manter os itens da
+            #quest de classe 2 no inventário
+        } else {
+            inicializarParametrosQuestClasse2("guardar")
+            #se NÃO for classe 1, então guarda tudo no armazém
+        }
+        
+        # Esse sub gera a hash %parametrosQuestClasse2T com a seguinte key:
+        # $parametrosQuestClasse2T{npc}
+        %parametrosQuestClasse2T = inicializarParametrosQuestClasse2T()
+        
+        # Esse sub por enquanto nao gera nada, porque ainda não foi implementado
+        inicializarParametrosQuestClasse3()
+
+        # Esse sub gera a hash %parametrosQuestClasseRenascer com a seguinte key:
+        # $parametrosQuestClasseRenascer{renascer}
+        # $parametrosQuestClasseRenascer{amigo}
+        # $parametrosQuestClasseRenascer{pontoDeEncontroX}
+        # $parametrosQuestClasseRenascer{pontoDeEncontroY}
+        %parametrosQuestClasseRenascer = inicializarParametrosQuestClasseRenascer()
+    }
+}
+
+automacro atualizarBuild {
+    BaseLevel > 0
+    priority 3 #sempre a terceira a executar
+    timeout 600 #atualiza as variáveis a cada 10 minutos
+    exclusive 1
+    call atualizarBuild
+}
+
+macro atualizarBuild {
+
+    $idClasseAtual = pegarID() #sub se encontra no arquivo utilidades.pm
+    call atualizarBuild_atributos
+    call atualizarBuild_skills
+    
+    if (&config(questc2_implementada) != true && pegarID() = $parametrosQuestClasse1{idC1}) {
+        [
+        warning =========================================================
+        warning   AVISO!
+        warning   ------
+        warning Este script para classe escolhida ainda está incompleto.
+        warning Portanto haverá um grande número de bugs e
+        warning não fará a quest da classe 2.
+        warning Ao continuar você está ciente de que essa macro não fará
+        warning tudo por você.
+        warning ==========================================================
+        ]
+        pause 5
+    }
+}
+
+macro atualizarBuild_atributos {
+    $classeSemBuildDeAtributos = undef
+    do conf statsAddAuto 1 if (&config(statsAddAuto) != 1)
+    do conf statsAddAuto_dontUseBonus 1 if (&config(statsAddAuto_dontUseBonus) != 1)
+    if ($idClasseAtual ~ 0, 4023, $parametrosClasses{idC1}, $parametrosClasses{idBC1}, $parametrosClasses{idC2}, $parametrosClasses{idBC2}, $parametrosClasses{idC2Alt}, $parametrosClasses{idBC2Alt} ) {
+        if ($configsBuild{statsPadrao} != -1) {
+            do conf statsAddAuto_list $configsBuild{statsPadrao} if (&config(statsAddAuto_list) != $configsBuild{statsPadrao})
+        } else {
+            $classeSemBuildDeAtributos = 1
+        }
+        
+    } elsif ($idClasseAtual ~ 4001, $parametrosClasses{idC1T}, $parametrosClasses{idC2T}, $parametrosClasses{idC2TAlt}) {
+        if ($configsBuild{statsPadraoTransclasse} != -1) {
+            do conf statsAddAuto_list $configsBuild{statsPadraoTransclasse} if (&config(statsAddAuto_list) != $configsBuild{statsPadraoTransclasse})
+        } else {
+            $classeSemBuildDeAtributos = 1
+        }
+        
+    } elsif ($idClasseAtual ~ $parametrosClasses{idC3}, $parametrosClasses{idC3Alt}, $parametrosClasses{idBC3}, $parametrosClasses{idBC3Alt} ) {
+        if ($configsBuild{statsPadraoClasse3} != -1) {
+            do conf statsAddAuto_list $configsBuild{statsPadraoClasse3} if (&config(statsAddAuto_list) != $configsBuild{statsPadraoClasse3})
+        } else {
+            $classeSemBuildDeAtributos = 1
+        }
+    
+    } else {
+        [
+        error ===================================
+        error = ocorreu um erro ao definir a build de atributos padrão para sua classe
+        error = caso isso apareça mais de 1 vez, contate os criadores da eventMacro
+        error = \$idClasseAtual : "$idClasseAtual"
+        error ===================================
+        ]
+        call informacoes
+        stop
+    }
+    
+    if ($classeSemBuildDeAtributos = 1) {
+        [
+        error ===================================
+        error = NÃO EXISTE UMA BUILD DE ATRIBUTOS PRONTA PARA A CLASSE
+        error = SEU BOT NÃO VAI DISTRIBIUR PONTOS DE ATRIBUTOS
+        error = SUGIRO FORTEMENTE CRIAR A SUA PRÓPRIA BUILD
+        error ===================================
+        ]
+        pause 5
+        stop
+    }
+
+    #se chegar até aqui tudo deu certo
+    [
+    log ===================================
+    log = build de atributos ta certinho
+    log ===================================
+    ]
+}
+
+macro atualizarBuild_skills {
+    do conf skillsAddAuto 1 if (&config(skillsAddAuto) != 1)
+    $classeSemBuild = undef
+    $classeAtual = undef
+    
+    if ($idClasseAtual ~ 0, 161, 4001, 4023) { #Aprendiz / Aprendiz T. / Baby Aprendiz
+        do conf skillsAddAuto_list $configsBuild{skillsAprendiz} if (&config(skillsAddAuto_list) != $configsBuild{skillsAprendiz})
+        $classeAtual = Aprendiz
+    } elsif ($idClasseAtual ~ $parametrosClasses{idC1}, $parametrosClasses{idBC1}) { #Classes 1
+        if ($configsBuild{skillsClasse1} != -1) { #se existir as skills
+            do conf skillsAddAuto_list $configsBuild{skillsClasse1} if (&config(skillsAddAuto_list) != $configsBuild{skillsClasse1})
+            $classeAtual = Classe 1
+        } else {
+            $classeSemBuild = classe 1
+        }
+    } elsif ($idClasseAtual ~ $parametrosClasses{idC2}, $parametrosClasses{idC2Alt}, $parametrosClasses{idBC2}, $parametrosClasses{idBC2Alt}) { #Classes 2
+        if ($configsBuild{skillsClasse2} != -1) {
+            do conf skillsAddAuto_list $configsBuild{skillsClasse2} if (&config(skillsAddAuto_list) != $configsBuild{skillsClasse2})
+            $classeAtual = Classe 2
+        } else {
+            $classeSemBuild = classe 2
+        }
+    } elsif ($idClasseAtual == $parametrosClasses{idC1T}) { #Classes 1T
+        if ($configsBuild{skillsClasse1T} != -1) {
+            do conf skillsAddAuto_list $configsBuild{skillsClasse1T} if (&config(skillsAddAuto_list) != $configsBuild{skillsClasse1T})
+            $classeAtual = Classe 1 Trans
+        } else {
+            $classeSemBuild = classe 1 Trans
+        }
+    } elsif ($idClasseAtual ~ $parametrosClasses{idC2T}, $parametrosClasses{idC2TAlt} ) { #Classes 2T
+        if ($configsBuild{skillsClasse2T} != -1) {
+            do conf skillsAddAuto_list $configsBuild{skillsClasse2T} if (&config(skillsAddAuto_list) != $configsBuild{skillsClasse2T})
+            $classeAtual = Classe 2 Trans
+        } else {
+            $classeSemBuild = classe 2 trans
+        }
+    } elsif ($idClasseAtual ~ $parametrosClasses{idC3}, $parametrosClasses{idC3Alt}, $parametrosClasses{idBC3}, $parametrosClasses{idBC3Alt}) { #Classes 3
+        if ($configsBuild{skillsClasse3} != -1) {
+            do conf skillsAddAuto_list $configsBuild{skillsClasse3} if (&config(skillsAddAuto_list) != $configsBuild{skillsClasse3})
+            $classeAtual = Classe 3
+        } else {
+            $classeSemBuild = classe 3
+        }
+    } else {
+        [
+        error ===================================
+        error Não foi possivel saber qual é a sua classe.
+        error ID encontrado: $idClasseAtual
+        error Contate os criadores da eventMacro
+        error ===================================
+        ]
+        call informacoes
+        stop
+    }
+    if (&defined($classeSemBuild) = 1) {
+        [
+        error ===================================
+        error = NÃO EXISTE UMA BUILD DE SKILLS PRONTA PARA A $classeSemBuild
+        error = SEU BOT NÃO VAI DISTRIBIUR PONTOS DE HABILIDADE
+        error = SUGIRO FORTEMENTE CRIAR A SUA PRÓPRIA BUILD
+        error ===================================
+        ]
+        pause 5
+        stop
+    }
+    if (&defined($classeAtual) = 1) {
+        [
+        log ===================================
+        log = build de skills da $classeAtual ta certinha
+        log ===================================
+        ]
+    }
+}
+
+
+automacro atualizarMapasDeUp_hook {
+    SimpleHookEvent base_level_changed
+    exclusive 1
+    call atualizarMapasDeUp
+}
+
+automacro atualizarMapasDeUp_ACada5Minutos {
+    timeout 300
+    exclusive 1
+    priority 4 #sempre a quarta a executar
+    BaseLevel != 99 #se estivermos lvl 99, não precisamos definir mapa de up
+    call atualizarMapasDeUp
+}
+
+macro atualizarMapasDeUp {
+    
+    $idClasseAtual = pegarID() #sub se encontra no arquivo utilidades.pm
+    
+    #sub 'extrairMapasDeUp' pega o mapa de up e o saveMap correto dependendo do lvl atual
+    # $mapa{lockMap}
+    # $mapa{saveMap}
+    if ($idClasseAtual ~ 0, 4023, $parametrosClasses{idC1}, $parametrosClasses{idBC1}, $parametrosClasses{idC2}, $parametrosClasses{idBC2}, $parametrosClasses{idC2Alt}, $parametrosClasses{idBC2Alt} ) {
+        %mapa = extrairMapasDeUp("$.lvl", "nao") # "nao" significa que ele não é transclasse
+    } elsif ($idClasseAtual ~ 4001, $parametrosClasses{idC1T}, $parametrosClasses{idC2T}, $parametrosClasses{idC2TAlt}) {
+        %mapa = extrairMapasDeUp("$.lvl", "sim") # "sim" significa que ele já rebornou e é trans
+    } else {
+        [
+        error ===================================
+        error = ERRO:
+        error = impossível definir locais de up
+        error = contate um dos criadores da macro
+        error = Id encontrada: '$idClasseAtual'
+        error ===================================
+        ]
+        call informacoes
+        stop
+    }
+    #futuramente: adicionar uma elsif para caso seja classe 3
+    
+    if (!&exists($mapa{lockMap}) && $.lvl < 99) {
+        [
+        error ===================================
+        error = ERRO:
+        error = mapas de up não foram definidos
+        error = significa que seu bot provavelmente nao vai upar
+        error = Contate os criadores da eventMacro
+        error = se vc tiver usando o 'Openkore Premium' do oscar
+        error = peço encarecidamente que vá se fuder
+        error ===================================
+        ]
+        call informacoes
+        pause 240 #fica travado mesmo, não quero que funcione
+        stop
+    }
+    [
+    log ===================================
+    log = mapas de up atualizados
+    log = vou upar em $mapa{lockMap} e salvar em $mapa{saveMap}
+    log ===================================
+    ]
+}
+sub verificarEInstalarPlugin {
+    my ($plugin) = @_;
+    if (-e "plugins/$plugin.pl" || -e "plugins/$plugin/$plugin.pl") { #primeiro checa se o plugin já está na pasta plugins do opk
+
+        $estaNoSys = 0;
+        
+        my $controlfile = Settings::getSysFilename();
+        open(FILE, '<:encoding(UTF-8)', $controlfile);
+        my @lines = <FILE>;
+        close(FILE);
+        chomp @lines;
+        #como ele está na pasta, agora realiza a verificação se ele está ativado no sys.txt
+        foreach my $line (@lines) {
+            next if $line =~ /^$/ || $line =~ /^#/;
+            if ($line =~ /$plugin/i ) {
+                $estaNoSys = 1;
+            }
+        }
+        #se não estiver ativado, esse código ativa o plugin no sys.txt automaticamente
+        if ( !$estaNoSys ) {
+            foreach my $line (@lines) {
+                next if $line =~ /^$/ || $line =~ /^#/;
+                if ($line =~ /loadPlugins_list\s+(.*)/ ) {
+                    $line = 'loadPlugins_list '.join (',',$1,$plugin);
+                }
+            }
+            open(WRITE, '>:encoding(UTF-8)', $controlfile);
+            print WRITE join ("\n", @lines);
+            close(WRITE);
+            message "Ativando $plugin\n";
+            Commands::run("plugin load plugins/$plugin.pl");
+        } else {
+            #essa mensagem aparece quando o plugin está na pasta correta, e está ativado no sys.txt
+            message "Checando plugin $plugin...\nTudo certo.\n";
+        }
+    } else {
+        #erro caso a pessoa não tiver instalado o plugin necessário para o funcionamento
+        error "Plugin $plugin não está na pasta plugins\n";
+        error "Por favor coloque o $plugin.pl na pasta plugins\n";
+        Misc::offlineMode(); #impede o openkore de continuar, para que a pessoa possa ver o erro
+    }
+}
+
+
+automacro questClasse1_virandoClasse1_bugada {
+    JobLevel = 10
+    InMapRegex /^(?!new_\d-\d)$/
+    SkillLevel NV_BASIC != 9
+    exclusive 1
+    call {
+        $pontos = $.SkillLevelLastLevel
+        log As Habilidades básicas nao foram distribuídas!!!
+        log A skill ta lvl $.SkillLevelLastLevel
+        log Mudando isso
+        while ($pontos < 9 ) {
+            do skills add NV_BASIC
+            $pontos++
+        }
+    }
+}
+
+automacro questClasse1_virandoClasse1 {
+    InMap $parametrosQuestClasse1{mapa}
+    JobID 0, 4023 #Aprendiz e Baby Aprendiz
+    JobLevel 10
+    SkillLevel NV_BASIC = 9
+    exclusive 1
+    call {
+        # $virarclasse1precisamover tem como valor sim ou nao
+        # $virarclasse1mapa tem como valor o mapa em vc vira classe 1
+        # $virarclasse1coordenadanpc contem as coordenadas do npc
+        # $virarclasse1sequenciadeconversa tem como valor a sequencia de conversação correta
+        # $idequipiniciante tem como valor a id da arma que vc recebe quando vira classe 1
+        
+        do conf -f o_que_estou_fazendo virando Classe 1
+        if ($parametrosQuestClasse1{precisaMover} = sim) {
+            do move $parametrosQuestClasse1{mapa} $parametrosQuestClasse1{npc} &rand(1,5)
+        }
+        do talknpc $parametrosQuestClasse1{npc} $parametrosQuestClasse1{sequenciaConversa}
+        call equiparSePossivel rightHand $parametrosQuestClasse1{equipeIniciante}
+
+        #Voltar pegar itens após o campo de treinamento
+        do conf itemsTakeAuto 1
+        do conf itemsGatherAuto 1
+    }
+}
+
+automacro questClasse1_saiDoCampoDeTreinamentoEEstouNoMapaErrado {
+    NotInMap $parametrosQuestClasse1{mapa}
+    InMapRegex /^(?!new_\d-\d).*/
+    JobID 0, 4023 #Aprendiz e Baby Aprendiz
+    JobLevel 10
+    SkillLevel NV_BASIC = 9
+    exclusive 1
+    BaseLevel > 11
+    call {
+        [
+            log ==============================================
+            log Deveria estar em $parametrosQuestClasse1{mapa}
+            log mas não estou, vou para lá
+            log ==============================================
+        ]
+        do move $parametrosQuestClasse1{mapa} $parametrosQuestClasse1{npc} &rand(1,5)
+    }
+}
+
+automacro questClasse1_jaSouClasse1 {
+    JobIDNot 0 #aprendiz
+    JobIDNot 4023 #Baby Aprendiz
+    InInventoryID 2414 = 1 #sandalias de aprendiz
+    exclusive 1
+    call {
+        do pconf 1243 0 #1243#Adaga_do_Aprendiz#
+        do pconf 2112 0 #2112#Vembrassa_do_Aprendiz#
+        do pconf 2414 0 #2414#Sandálias_do_Aprendiz#
+        do pconf 2510 0 #2510#Capuz_do_Aprendiz#
+        do pconf 2532 0 #2352#Traje_do_Aprendiz#
+        do pconf 5055 0 #5055#Chapéu_de_Ovo_do_Aprendiz#
+        do iconf 2393 0 0 0 #Tunica de Iniciante
+        do iconf $parametrosQuestClasse1{equipeIniciante} 0 0 0
+        $check = pegarIndiceDoEquipamentoPeloId("rightHand", 1243) #Adaga_do_Aprendiz#
+        if ($check != -1) do drop $check
+        $check = pegarIndiceDoEquipamentoPeloId("leftHand", 2112)#Vembrassa_do_Aprendiz#
+        if ($check != -1) do drop $check
+        $check = pegarIndiceDoEquipamentoPeloId("shoes", 2414) #Sandálias_do_Aprendiz#
+        if ($check != -1) do drop $check
+        $check = pegarIndiceDoEquipamentoPeloId("robe", 2510) #Capuz_do_Aprendiz#
+        if ($check != -1) do drop $check
+        $check = pegarIndiceDoEquipamentoPeloId("armor", 2352) #Chapéu_de_Ovo_do_Aprendiz#
+        if ($check != -1) do drop $check
+        $check = pegarIndiceDoEquipamentoPeloId("topHead", 5055) #Chapéu_de_Ovo_do_Aprendiz#
+        if ($check != -1) do drop $check
+        $check = pegarIndiceDoEquipamentoPeloId("armor", 2393) #Tunica de Iniciante
+        if ($check != -1) do eq $check
+        $check = pegarIndiceDoEquipamentoPeloId("rightHand", "$parametrosQuestClasse1{equipeIniciante}")
+        if ($check != -1) do eq $check
+        call atualizarBuild
+        do conf -f o_que_estou_fazendo acabei de Virar Classe 1
+    }
+}
+
+automacro questClasse1T_virandoClasse1T_bugada {
+    JobLevel = 10
+    JobID 161 #aprendiz T.
+    InMapRegex /^(?!new_\d-\d)$/
+    SkillLevel NV_BASIC != 9
+    exclusive 1
+    call {
+        $pontos = $.SkillLevelLastLevel
+        log As Habilidades básicas nao foram distribuídas!!!
+        log A skill ta lvl $.SkillLevelLastLevel
+        log Mudando isso
+        while ($pontos < 9 ) {
+            do skills add NV_BASIC
+            $pontos++
+        }
+    }
+}
+automacro questClasse1T_irAteNpc {
+    NotInMap $parametrosQuestClasse1T{mapa}
+    JobID 161,4001 #Aprendiz
+    JobLevel 10
+    SkillLevel NV_BASIC = 9
+    exclusive 1
+    call {
+        do conf lockMap none
+        call pararDeAtacar
+        do conf -f virandoClasse1T true
+        do conf -f o_que_estou_fazendo virando Classe 1 Trans
+        log cidade: $parametrosQuestClasse1T
+        do move moc_prydb1 43 128
+    }
+}
+
+automacro questClasse1T_virandoClasse1T {
+    InMap $parametrosQuestClasse1T{mapa}
+    JobID 161,4001 #Aprendiz
+    JobLevel 10
+    SkillLevel NV_BASIC = 9
+    exclusive 1
+    call {
+        # $parametrosQuestClasse1T{mapa} tem como valor o mapa em vc vira classe 1
+        # $parametrosQuestClasse1T{npc} contem as coordenadas do npc
+        # $parametrosQuestClasse1T{sequenciaConversa} tem como valor a sequencia de conversação correta
+        # $parametrosQuestClasse1T{equipeIniciante} tem como valor a id da arma que vc recebe quando vira classe 1
+        do conf -f virandoClasse1T true
+        do conf -f o_que_estou_fazendo virando Classe 1 Trans
+        [
+        log ===================================
+        log = mapa: "$parametrosQuestClasse1T{mapa}"
+        log = npc:  "$parametrosQuestClasse1T{npc}"
+        log = sequenciaConversa: "$parametrosQuestClasse1T{sequenciaConversa}"
+        log = equip: "$parametrosQuestClasse1T{equipeIniciante}"
+        log ===================================
+        ]
+        if (!&exists($parametrosQuestClasse1T{npc})) {
+            [
+            error ===================================
+            error = problema encontrado:
+            error = não há informação sobre qual é o npc
+            error = pra virar classe 1 Trans
+            error = oq foi encontrado: "$parametrosQuestClasse1T{npc}"
+            error = reporte aos criadores dessa eventMacro
+            error ===================================
+            ]
+            call informacoes
+            pause 30
+            stop
+        }
+        #repetindo o comando de se mover só por desencargo de consciencia
+        do move $parametrosQuestClasse1T{mapa} $parametrosQuestClasse1T{npc} &rand(1,5)
+        do talknpc $parametrosQuestClasse1T{npc} $parametrosQuestClasse1T{sequenciaConversa}
+        
+        if (pegarID() != $parametrosClasses{idC1T}) {
+            [
+            error ===================================
+            error = Erro Crítico:
+            error = Seu personagem ainda não é classe 1T
+            error = mesmo após ter tentado falar com o npc
+            error = reporte aos criadores da eventMacro
+            error ===================================
+            ]
+            call informacoes
+            do eval Misc::offlineMode();
+        }
+    }
+}
+
+automacro questClasse1T_jaSouClasse1T {
+    JobID $parametrosClasses{idC1T}
+    ConfigKey virandoClasse1T true
+    exclusive 1
+    call {
+        call atualizarBuild
+        do iconf 2393 0 0 0 #Tunica de Iniciante
+        do iconf $parametrosQuestClasse1T{equipeIniciante} 0 0 0
+        call equiparSePossivel "armor" 2393 #Tunica de Iniciante
+        call equiparSePossivel rightHand $parametrosQuestClasse1T{equipeIniciante}
+        do conf virandoClasse1T none
+        
+        do conf -f o_que_estou_fazendo acabei de Virar Classe 1 T
+        
+        release equipandoArmaEden
+        release equipandoArmaduraEden
+        release equipandoBotaEden
+        release equipandoChapeuEden
+        release equipandoCapaEden
+    }
+}
+
+#Parte comum em todas quests de classes
+automacro questClasse2_virarClasse2Inicio_bugada {
+    FreeSkillPoints > 0
+    timeout 30
+    JobLevel = 50
+    JobID $parametrosClasses{idC1}
+    exclusive 1
+    call {
+        [
+        log =============================================
+        log = Estou pronto para virar claase2, porém    =
+        log =     os pontos não estão distribuídos...   =
+        log =            Vamos resolver isso!           =
+        log =============================================
+        ]
+        do conf skillsAddAuto 1
+        do conf skillsAddAuto_list $configsBuild{skillsClasse1}
+        [
+        log ================================================================
+        log = Se isso estiver aparecendo repetidamente, a macro tem um bug
+        log = Ou não foi definido skills para serem distribuídas nessa classe
+        log ================================================================
+        ]
+    }
+}
+
+automacro questClasse2_inicio {
+    JobLevel = 50
+    FreeSkillPoints = 0
+    JobID $parametrosClasses{idC1}, $parametrosClasses{idBC1}
+    ConfigKeyNot virarClasse2 true
+    exclusive 1
+    ConfigKey questc2_implementada true
+    call {
+        do conf -f virarClasse2 true
+        do conf -f o_que_estou_fazendo virandoClasse2
+    }
+}
+
+automacro questClasse2_jaSouClasse2 {
+    JobID $parametrosClasses{idC2}, $parametrosClasses{idC2Alt}, $parametrosClasses{idBC2}, $parametrosClasses{idBC2Alt}
+    ConfigKey virarClasse2 true
+    exclusive 1
+    call {
+        [
+        log ===================
+        log = Já sou classe 2 =
+        log ===================
+        ]
+        do conf virarClasse2 none
+        do conf -f o_que_estou_fazendo acabeiDeVirarClasse2
+        release equipandoArmaEden
+        release equipandoArmaduraEden
+        release equipandoBotaEden
+        release equipandoChapeuEden
+        release equipandoCapaEden
+        call atualizarBuild
+    }
+}
+
+automacro questClasse2_jaSouClasse2NaoAutomatico {
+    JobID $parametrosClasses{idC2} , $parametrosClasses{idC2Alt}, $parametrosClasses{idBC2}, $parametrosClasses{idBC2Alt}
+    ConfigKey esperarFazerQuest true
+    exclusive 1
+    call {
+        [
+        log =================================================
+        log = Já sou classe 2, pois fiz a quest manualmente =
+        log =================================================
+        ]
+        do conf esperarFazerQuest none
+        do conf -f o_que_estou_fazendo acabeiDeVirarClasse2
+        release equipandoArmaEden
+        release equipandoArmaduraEden
+        release equipandoBotaEden
+        release equipandoChapeuEden
+        release equipandoCapaEden
+        call atualizarBuild
+    }
+}
+
+automacro questClasse2_avisoNivelDeClasse50 {
+    JobLevel = 50
+    JobID $parametrosClasses{idC1}, $parametrosClasses{idBC1}
+    exclusive 1
+    timeout 20
+    ConfigKeyNot virarClasse2 true
+    ConfigKeyNot questc2_implementada true
+    ConfigKeyNot virarClasse2T true
+    call {
+        [
+        log ===================================
+        log SEU CHAR JÁ ESTÁ NO NIVEL 50 DE CLASSE
+        log FAÇA A QUEST PARA VIRAR CLASSE 2 MANUALMENTE POR FAVOR
+        log DEPOIS ABRA O BOT NOVAMENTE
+        log ASSIM QUE ELE SE TORNAR UM CLASSE 2, A MACRO VOLTA A UPAR NORMALMENTE
+        log ===================================
+        ]
+        do conf lockMap none
+        call pararDeAtacar
+        do conf -f esperarFazerQuest true
+        do conf -f o_que_estou_fazendo esperandoQuestSerFeitaManualmente
+        do move &config(saveMap) if ($.map != &config(saveMap))
+    }
+}
+
+automacro questClasse2T_iniciarQuestClasse2T_bugada {
+    JobLevel = $configsBuild{lvlClasseParaVirarClasse2T}
+    exclusive 1
+    JobID $parametrosClasses{idC1T}
+    FreeSkillPoints != 0
+    timeout 60
+    call {
+        [
+        log ==================================
+        log pontos de skills não distribuidos!
+        log tentando resolver isso
+        log ==================================
+        ]
+        do conf skillsAddAuto 1
+        do conf skillsAddAuto_list $configsBuild{skillsClasse1T}
+    }
+}
+
+automacro questClasse2T_irParaJuno {
+    exclusive 1
+    JobID $parametrosClasses{idC1T}
+    JobLevel = $configsBuild{lvlClasseParaVirarClasse2T}
+    FreeSkillPoints = 0
+    NotInMap yuno_in02
+    ConfigKeyNot virarClasse2T true
+    call {
+        call pararDeAtacar
+        do conf lockMap none
+        do conf -f virarClasse2T true
+        do conf -f o_que_estou_fazendo virandoClasse2T
+        do move yuno_in02
+    }
+}
+
+automacro questClasse2T_irFalarComLivro {
+    exclusive 1
+    JobID $parametrosClasses{idC1T}
+    JobLevel = $configsBuild{lvlClasseParaVirarClasse2T}
+    FreeSkillPoints = 0
+    InMap yuno_in02
+    NpcNotNear /Livro de Ymir/
+    call {
+        do talknpc 88 164
+        do move yuno_in02 &rand(91,95) &rand(204,206)
+    }
+}
+
+automacro questClasse2T_falarComLivro {
+    exclusive 1
+    JobID $parametrosClasses{idC1T}
+    JobLevel = $configsBuild{lvlClasseParaVirarClasse2T}
+    FreeSkillPoints = 0
+    InMap yuno_in02
+    NpcNear /Livro de Ymir/
+    call {
+        do talknpc 93 207 r1
+    }
+}
+
+automacro questClasse2T_falarComNpcDaClasse {
+    exclusive 1
+    JobID $parametrosClasses{idC1T}
+    JobLevel = $configsBuild{lvlClasseParaVirarClasse2T}
+    FreeSkillPoints = 0
+    InMap valkyrie
+    call {
+        do move valkyrie $parametrosQuestClasse2T{Npc} &rand(2,5)
+        do talknpc $parametrosQuestClasse2T{Npc} r1
+    }
+}
+
+automacro questClasse2T_jaSouClasse2TSairDaValquiria {
+    InMap valkyrie
+    exclusive 1
+    JobID $parametrosClasses{idC2T}
+    call {
+        $mapaQueVou = $mapa{saveMap}
+        do move valkyrie 44 33 &rand(3,5)
+        do talk &npc(44 33) #teleportadora
+        if ($mapaQueVou = aldebaran) {
+            $mapaQueVou = Al\sDe\sBaran
+
+        } elsif ($mapaQueVou = morocc) {
+            $mapaQueVou = morroc
+
+        } elsif ($mapaQueVou ~ einbroch,rachel,veins,yuno) {
+            $mapaQueVou = juno
+
+        }
+        #ainda tem que colocar uma condição pra caso seja uma cidade que nao esteja listada no teleporte
+        do talk resp /$mapaQueVou/i
+    }
+}
+
+automacro questClasse2T_jaSouClasse2T {
+    exclusive 1
+    NotInMap valkyrie
+    JobID $parametrosClasses{idC2T}, $parametrosClasses{idC2TAlt}
+    ConfigKey virarClasse2T true
+    macro_delay 2
+    call {
+        do conf virarClasse2T none
+        do conf -f o_que_estou_fazendo acabeiDeVirarClasse2T
+        release equipandoArmaEden
+        release equipandoArmaduraEden
+        release equipandoBotaEden
+        release equipandoChapeuEden
+        release equipandoCapaEden
+        call atualizarBuild
+    }
+}
+
+#Parte comum em todas quests de classes
+automacro questClasse3_virarClasse3Inicio_bugada {
+    FreeSkillPoints > 0
+    timeout 30
+    BaseLevel = 99
+    JobLevel = 70
+    JobID $parametrosClasses{idC2T}, $parametrosClasses{idC2TAlt}, $parametrosClasses{idBC2}, $parametrosClasses{idBC2Alt}
+    exclusive 1
+    call {
+        [
+        log =============================================
+        log = Estou pronto para virar classe3, porém    =
+        log =     os pontos não estão distribuídos...   =
+        log =            Vamos resolver isso!        =
+        log =============================================
+        ]
+        do conf skillsAddAuto 1
+        do conf skillsAddAuto_list $configsBuild{skillsClasse2T}
+        [
+        log ================================================================
+        log = Se isso estiver aparecendo repetidamente, a macro tem um bug
+        log = Ou não foi definido skills para serem distribuídas nessa classe
+        log ================================================================
+        ]
+    }
+}
+
+automacro questClasse3_inicio {
+    BaseLevel = 99
+    JobLevel = 70
+    FreeSkillPoints = 0
+    JobID $parametrosClasses{idC2T}, $parametrosClasses{idC2TAlt}, $parametrosClasses{idBC2}, $parametrosClasses{idBC2Alt}
+    ConfigKeyNot virarClasse3 true
+    exclusive 1
+    ConfigKey questc3_implementada true
+    call {
+        do conf -f virarClasse3 true
+        do conf -f o_que_estou_fazendo virandoClasse3
+    }
+}
+
+automacro questClasse3_jaSouClasse3 {
+    JobID $parametrosClasses{idC3}, $parametrosClasses{idC3Alt}, $parametrosClasses{idBC3}, $parametrosClasses{idBC3Alt}
+    ConfigKey virarClasse3 true
+    exclusive 1
+    call {
+        [
+        log ===================
+        log = Já sou classe 3 =
+        log ===================
+        ]
+        do conf virarClasse3 none
+        do conf -f o_que_estou_fazendo acabeiDeVirarClasse3
+        release equipandoArmaEden
+        release equipandoArmaduraEden
+        release equipandoBotaEden
+        release equipandoChapeuEden
+        release equipandoCapaEden
+        call atualizarBuild
+    }
+}
+
+automacro questClasse3_jaSouClasse3NaoAutomatico {
+    JobID $parametrosClasses{idC3}, $parametrosClasses{idC3Alt}, $parametrosClasses{idBC3}, $parametrosClasses{idBC3Alt}
+    ConfigKey esperarFazerQuest true
+    exclusive 1
+    call {
+        [
+        log =================================================
+        log = Já sou classe 3, pois fiz a quest manualmente =
+        log =================================================
+        ]
+        do conf esperarFazerQuest none
+        do conf -f o_que_estou_fazendo acabeiDeVirarClasse3
+        release equipandoArmaEden
+        release equipandoArmaduraEden
+        release equipandoBotaEden
+        release equipandoChapeuEden
+        release equipandoCapaEden
+        call atualizarBuild
+    }
+}
+
+# 22508#Emblema do Éden#
+
+automacro Não_Encontrei_a_Insignia_do_Eden {
+    InInventoryID 22508 = 0 #Insignia do Eden
+    timeout 900
+    call set_membro_eden_nao
+	ConfigKey membroDoEden sim
+}
+
+macro set_membro_eden_nao {
+    do conf membroDoEden não
+}
+
+
+automacro seJuntarAoGrupoEden_MoverPerto {
+    ConfigKeyNot quest_eden em_curso
+    ConfigKeyNot naSequenciaDeSalvamento true
+    InInventoryID 2414 = 0 #sapatos de aprendiz
+    exclusive 1
+    BaseLevel >= 12
+    ConfigKeyNot membroDoEden sim
+    NpcNotNear /Lenore|Lime/
+    JobIDNot 0 #aprendiz
+    JobIDNot 4023 #Baby Aprendiz
+    call moverPertoDosNpcEden
+}
+
+automacro seJuntarAoGrupoEden {
+    ConfigKeyNot membroDoEden sim
+    ConfigKeyNot quest_eden em_curso
+    ConfigKeyNot naSequenciaDeSalvamento true
+    run-once 1
+    exclusive 1
+    NpcNear /Lenore|Lime/
+    call {
+        do talk $.NpcNearLastBinId
+        do talk resp 1
+        do talk resp 0
+        do talk text lolol
+        do talk text lolol
+        do talk resp 4
+        do iconf 22508 0 0 0 #Emblema do Éden
+    }
+}
+
+automacro entreiNoGrupoEden {
+    InInventoryID 22508 = 1 #Emblema do Éden#
+    ConfigKeyNot membroDoEden sim
+    exclusive 1
+    call {
+        do conf -f membroDoEden sim
+    }
+}
+
+automacro questEden_trocarEmblemaIndoProNpc {
+    InInventoryID 6219 = 1 #emblema do grupo valhalla (o antigo)
+    NpcNotNear /Lenore|Lime/
+    exclusive 1
+    priority 28 # um pouco alta
+    call moverPertoDosNpcEden
+}
+
+automacro questEden_trocarEmblema {
+    InInventoryID 6219 = 1 #emblema do grupo valhalla (o antigo)
+    exclusive 1
+    priority 28 # um pouco alta
+    NpcNear /Lenore|Lime/
+    call {
+        do talk $.NpcNearLastBinId
+        do talk resp 0
+        do iconf 22508 0 0 0 #Emblema do Éden
+    }
+}
+
+automacro questEden12_iniciandoMoverPerto {
+    NpcNotNear /Boya/
+    InInventoryID 22508 = 1 #Emblema do Éden#
+    ConfigKeyNot fazerQuestEden nao
+    BaseLevel 12..18
+    exclusive 1
+    QuestInactive 7128
+    ConfigKeyNot naSequenciaDeSalvamento true
+    ConfigKeyNot quest_eden em_curso
+    ConfigKeyNot quest_eden terminando
+    IsNotEquippedID armor 15009 #Uniforme Valhalla Iniciante
+    InInventoryID 15009 = 0 #Uniforme Valhalla Iniciante
+#    JobIDNot $parametrosClasses{idC1T}
+#    JobIDNot $parametrosClasses{idC2T}
+#    JobIDNot $parametrosClasses{idC2TAlt}
+    call moverPertoDosNpcEden
+}
+
+automacro questEden26_iniciandoMoverPerto {
+    NpcNotNear /Boya/
+    InInventoryID 22508 = 1
+    ConfigKeyNot fazerQuestEden nao
+    BaseLevel 26..32
+	exclusive 1
+    QuestInactive 7138
+    QuestInactive 7139
+    QuestInactive 7140
+	ConfigKeyNot naSequenciaDeSalvamento true
+	ConfigKeyNot quest_eden em_curso
+    ConfigKeyNot quest_eden terminando
+    IsNotEquippedID armor 15010
+    InInventoryID 15010 = 0
+#    JobIDNot $parametrosClasses{idC1T}
+#    JobIDNot $parametrosClasses{idC2T}
+#    JobIDNot $parametrosClasses{idC2TAlt}
+    call moverPertoDosNpcEden
+}
+
+automacro questEden40_iniciandoMoverPerto {
+    NpcNotNear /Boya/
+	InInventoryID 22508 = 1 #Emblema do Éden#
+	ConfigKeyNot fazerQuestEden nao
+    BaseLevel 40..49
+    JobLevel != 50
+    exclusive 1
+    QuestInactive 7147
+    QuestInactive 7148
+    QuestInactive 7149
+    QuestInactive 7150
+    QuestInactive 7151
+    ConfigKeyNot naSequenciaDeSalvamento true
+    ConfigKeyNot quest_eden em_curso
+    ConfigKeyNot quest_eden terminando
+    IsNotEquippedID armor 15011 #armadura que ganha com essa quest
+    InInventoryID 15011 = 0 #armadura que ganha com essa quest
+#    JobIDNot $parametrosClasses{idC1T}
+#    JobIDNot $parametrosClasses{idC2T}
+#    JobIDNot $parametrosClasses{idC2TAlt}
+    call moverPertoDosNpcEden
+}
+
+automacro questEden60_iniciandoMoverPerto {
+    NpcNotNear /Ur/
+    BaseLevel 60..69
+    exclusive 1
+    InInventoryID 22508 = 1 #Emblema do Éden#
+    JobID $parametrosClasses{idC2}, $parametrosClasses{idC2Alt}, $parametrosClasses{idC2T}, $parametrosClasses{idC2TAlt}, $parametrosClasses{idBC2}, $parametrosClasses{idBC2Alt}
+    QuestInactive 7214
+    ConfigKeyNot fazerQuestEden nao
+    ConfigKeyNot naSequenciaDeSalvamento true
+    ConfigKeyNot quest_eden em_curso
+    ConfigKeyNot quest_eden terminando
+    IsNotEquippedID armor 15031 #Armadura do Grupo Éden
+    InInventoryID 15031 = 0 #Armadura do Grupo Éden
+#    JobIDNot $parametrosClasses{idC1T}
+#    JobIDNot $parametrosClasses{idC2T}
+#    JobIDNot $parametrosClasses{idC2TAlt}
+    call moverPertoDosNpcEden
+}
+
+macro moverPertoDosNpcEden {
+    do conf lockMap none
+    call pararDeAtacar
+    [
+    log ===========================================
+    log =movendo pra perto dos npc do eden pra começar a quest
+    log ===========================================
+    ]
+    do move moc_para01 &rand(33,35) &rand(25,27) #posição otima no Eden
+    do reload event
+    #estranhamente qando ele chega perto do npc do eden, ele nao checa alguma
+    #das condições (arrisco dizer a de inventory) por isso tive que colocar essa linha
+    #que recarrega o eventMacros, aí a proxima automacro trigga de boas
+}
+
+automacro questEden12_iniciando {
+    NpcNear /Boya/
+    InInventoryID 22508 = 1 #Emblema do Éden#
+    BaseLevel 12..17
+    exclusive 1
+    QuestInactive 7128
+    ConfigKeyNot fazerQuestEden nao
+    ConfigKeyNot naSequenciaDeSalvamento true
+    ConfigKeyNot quest_eden em_curso
+    ConfigKeyNot quest_eden terminando
+    IsNotEquippedID armor 15009 #Uniforme Valhalla Iniciante
+    InInventoryID 15009 = 0 #Uniforme Valhalla Iniciante
+    call {
+        [
+        log ===================================
+        log =Iniciando a quest eden do lvl 12
+        log ===================================
+        ]
+        do talk $.NpcNearLastBinId
+        do talk resp 1
+        do talk resp 0
+        do talk resp 0
+
+        do conf -f o_que_estou_fazendo iniciando Quest Eden 12
+    }
+}
+
+
+automacro questEden26_iniciando {
+    NpcNear /Boya/
+    BaseLevel 26..32
+    ConfigKeyNot fazerQuestEden nao
+    InInventoryID 22508 = 1 #Emblema do Éden#
+    exclusive 1
+    QuestInactive 7138
+    QuestInactive 7139
+    QuestInactive 7140
+    ConfigKeyNot naSequenciaDeSalvamento true
+    ConfigKeyNot quest_eden em_curso
+    ConfigKeyNot quest_eden terminando
+    IsNotEquippedID armor 15010 #Uniforme Valhalla Intermediário
+    InInventoryID 15010 = 0 #Uniforme Valhalla Intermediário
+    call {
+        [
+        log ===================================
+        log =Iniciando a quest eden do lvl 26
+        log ===================================
+        ]
+        do talk $.NpcNearLastBinId
+
+        #se vc não tiver feito a quest éden do lvl 12, a conversa é diferente
+        #de quem fez ela
+        if (&inventory(Uniforme Valhalla Iniciante) != -1) {
+            #se tiver o item da quest éden 12, use essa sequência
+            do talk resp 1
+        } else {
+            #se não tiver, use essa sequência
+            do talk resp 1
+            do talk resp 0
+            do talk resp 0
+        }
+
+        do conf -f o_que_estou_fazendo iniciando Quest Eden 26
+    }
+}
+
+automacro questEden40_iniciando {
+    NpcNear /Boya/
+    BaseLevel 40..49
+    InInventoryID 22508 = 1 #Emblema do Éden#
+    ConfigKeyNot fazerQuestEden nao
+    exclusive 1
+    QuestInactive 7147
+    ConfigKeyNot naSequenciaDeSalvamento true
+    ConfigKeyNot quest_eden em_curso
+    ConfigKeyNot quest_eden terminando
+    IsNotEquippedID armor 15011 #Uniforme Valhalla Avançado
+    InInventoryID 15011 = 0 #Uniforme Valhalla Avançado
+    call {
+        [
+        log ==================================
+        log =Iniciando a quest eden do lvl 40
+        log ==================================
+        ]
+        do talk $.NpcNearLastBinId
+
+        #se vc não tiver feito a quest éden do lvl 12, a conversa é diferente
+        #de quem fez ela
+        if (&inventory(Uniforme do Éden I) != -1) {
+            #se tiver o item da quest éden 12, use essa sequência
+            do talk resp 0
+        } else {
+            #se não tiver, use essa sequência
+            do talk resp 1
+            do talk resp 0
+            do talk resp 0
+        }
+
+        do conf -f o_que_estou_fazendo iniciando Quest Eden 40
+    }
+}
+
+automacro questEden60_iniciando {
+    NpcNear /Ur/
+    BaseLevel 60..69
+    ConfigKeyNot fazerQuestEden nao
+    exclusive 1
+    InInventoryID 22508 = 1 #Emblema do Éden#
+    JobID $parametrosClasses{idC2}, $parametrosClasses{idC2Alt}, $parametrosClasses{idC2T}, $parametrosClasses{idC2TAlt}, $parametrosClasses{idBC2}, $parametrosClasses{idBC2Alt}
+    QuestInactive 7214
+    ConfigKeyNot naSequenciaDeSalvamento true
+    ConfigKeyNot quest_eden em_curso
+    ConfigKeyNot quest_eden terminando
+    IsNotEquippedID armor 15031 #Armadura do Grupo Éden
+    InInventoryID 15031 = 0 #Armadura do Grupo Éden
+    call {
+        #aqui não importa se fizeram as outras quests ou não
+        #como o npc é diferente, fica de boas
+        [
+        log ===================================
+        log =Iniciando a quest eden do lvl 60
+        log ===================================
+        ]
+        do talk $.NpcNearLastBinId
+        do talk resp 0
+        do talk resp 1
+
+        do conf -f o_que_estou_fazendo iniciando Quest Eden 60
+    }
+}
+
+automacro questEden_avisoIntermitenteNivel12 {
+    exclusive 1
+    QuestActive 7128
+    BaseLevel 12..15
+    timeout 120
+    call {
+        [
+        log ======================================
+        log comecei a quest eden, porém só vou
+        log fazer ela no lvl 15 ou acima!
+        log como não to nesse level ainda, vou upar.
+        log eu estou no lvl $.lvl agora
+        log ======================================
+        ]
+    }
+}
+
+#Lembrete: quest éden lvl 26 não precisa desse aviso interminente
+#porque ele já vai matar no lvl que começa, diferente das outras
+
+automacro questEden_avisoIntermitenteNivel40 {
+    exclusive 1
+    QuestActive 7147
+    BaseLevel 40..49
+    timeout 180
+    call {
+        [
+        log ======================================
+        log comecei a quest eden, porém só vou
+        log fazer ela no lvl 50 ou acima!
+        log como não to nesse level ainda, vou upar.
+        log eu estou no lvl $.lvl agora
+        log ======================================
+        ]
+    }
+}
+
+automacro questEden_avisoIntermitenteNivel60 {
+    exclusive 1
+    QuestActive 7214
+    BaseLevel 60..69
+    timeout 240
+    call {
+        [
+        log ======================================
+        log comecei a quest eden, porém só vou
+        log fazer ela no lvl 70 ou acima!
+        log como não to nesse level ainda, vou upar.
+        log eu estou no lvl $.lvl agora
+        log ======================================
+        ]
+    }
+}
+
+
+#7128#Grupo Valhalla#SG_FEEL#QUE_NOIMAGE#
+#Você começa seu treinamento com o Grupo Valhalla. Procure o cão falante em Sograt. #
+#Converse com o cão falante #
+automacro questEden12_salvarNaKafra {
+    QuestActive 7128
+    exclusive 1
+    BaseLevel >= 15
+    ConfigKeyNot naSequenciaDeSalvamento true
+    ConfigKeyNot saveMap morocc
+    call {
+        do conf -f quest_eden em_curso
+        call salvarNaCidade "morocc"
+        do conf -f o_que_estou_fazendo quest eden 12
+    }
+}
+
+#7138#Grupo Valhalla#SG_FEEL#QUE_NOIMAGE#
+#Seu próximo desafio é em na Caverna de Payon. Procure um representante do Grupo Valhalla. #
+#Converse com o representante do Grupo Valhalla #
+automacro questEden26_SalvarNaKafra {
+    QuestActive 7138
+    BaseLevel >= 26
+    exclusive 1
+    ConfigKeyNot naSequenciaDeSalvamento true
+    ConfigKeyNot saveMap payon
+    call {
+        do conf -f quest_eden em_curso
+        call salvarNaCidade "payon"
+        do conf -f o_que_estou_fazendo quest eden 26
+    }
+}
+
+#7147#Grupo Valhalla#SG_FEEL#QUE_NOIMAGE#
+#Seu próximo desafio é na Vila Orc. Procure um representante do Grupo Valhalla. #
+#Converse com o representante do Grupo Valhalla #
+automacro questEden40_SalvarNaKafra {
+    QuestActive 7147
+    BaseLevel >= 50
+    exclusive 1
+    ConfigKeyNot naSequenciaDeSalvamento true
+    ConfigKeyNot saveMap prontera
+    call {
+        do conf -f quest_eden em_curso
+        call salvarNaCidade "prontera"
+        do conf -f o_que_estou_fazendo quest eden 40
+    }
+}
+
+#7214#Treino Avançado - Passo 1 - Comodo#SG_FEEL#QUE_NOIMAGE#
+#Encontre o Membro do Grupo Éden em frente à entrada da caverna norte de Comodo #
+#Fale com Romeo #
+automacro questEden60_SalvarNaKafra {
+    QuestActive 7214
+    BaseLevel >= 70
+    exclusive 1
+    ConfigKeyNot naSequenciaDeSalvamento true
+    ConfigKeyNot saveMap comodo
+    call {
+        do conf -f quest_eden em_curso
+        call salvarNaCidade "comodo"
+        do conf -f o_que_estou_fazendo quest eden 60
+    }
+}
+
+#7128#Grupo Valhalla#SG_FEEL#QUE_NOIMAGE#
+#Você começa seu treinamento com o Grupo Valhalla. Procure o cão falante em Sograt. #
+#Converse com o cão falante #
+automacro questEden12_IrNoMapa {
+    QuestActive 7128
+    exclusive 1
+    BaseLevel >= 15
+    ConfigKeyNot naSequenciaDeSalvamento true
+    ConfigKey saveMap morocc
+    call irNoMapa 'moc_fild11' '180 253' '1107' '1001' '1009' #monstros: filhote de lobo, escopião, condor
+}
+
+#7138#Grupo Valhalla#SG_FEEL#QUE_NOIMAGE#
+#Seu próximo desafio é em na Caverna de Payon. Procure um representante do Grupo Valhalla. #
+#Converse com o representante do Grupo Valhalla #
+automacro questEden26_IrNoMapa {
+    QuestActive 7138
+    BaseLevel >= 26
+    exclusive 1
+    ConfigKeyNot naSequenciaDeSalvamento true
+    ConfigKey saveMap payon
+    call irNoMapa 'pay_arche' '41 136' '1076' '1031' '1015' #monstros: esqueleto, poporing, zumbi
+}
+
+#7147#Grupo Valhalla#SG_FEEL#QUE_NOIMAGE#
+#Seu próximo desafio é na Vila Orc. Procure um representante do Grupo Valhalla. #
+#Converse com o representante do Grupo Valhalla #
+automacro questEden40_IrNoMapa {
+    QuestActive 7147
+    BaseLevel >= 50
+    exclusive 1
+    ConfigKeyNot naSequenciaDeSalvamento true
+    ConfigKey saveMap prontera
+    call irNoMapa 'in_orcs01' '38 175' '1023' '1686' '1273' #monstros: guerreiro orc, filhote de orc, senhora orc
+}
+
+#7214#Treino Avançado - Passo 1 - Comodo#SG_FEEL#QUE_NOIMAGE#
+#Encontre o Membro do Grupo Éden em frente à entrada da caverna norte de Comodo #
+#Fale com Romeo #
+automacro questEden60_IrNoMapa {
+    QuestActive 7214
+    BaseLevel >= 70
+    exclusive 1
+    ConfigKeyNot naSequenciaDeSalvamento true
+    ConfigKey saveMap comodo
+    call irNoMapa 'comodo' '173 354'
+}
+
+macro irNoMapa {
+    do conf -f quest_eden em_curso
+    [
+    log ===========================
+    log =indo fazer a quest eden
+    log ===========================
+    ]
+    ## $.param[0] tem como valor o local do npc
+    ## $.param[1] tem como valor a coordenada x e y
+    ## $.param[2] tem como valor a id do monstro 1
+    ## $.param[3] tem como valor a id do monstro 2
+    ## $.param[4] tem como valor a id do monstro 3
+    
+    do move $.param[0] $.param[1] &rand(1,5)
+    do talk &npc($.param[1])
+    if ($.param[0] = moc_fild11) do talk resp 1  #significa que ta na quest eden 12
+    if ( &defined($.param[2]) ) { #evita de mostrar linhas vermelhas a toa de "variavel não existe"
+        do mconf $.param[2] 0 0 0
+        do mconf $.param[3] 0 0 0
+        do mconf $.param[4] 0 0 0
+    }
+}
+
+
+automacro questEden12_Cacar {
+    QuestHuntOngoing 7129 1009, 7130 1107, 7131 1001
+    exclusive 1
+    timeout 120
+    call cacarMonstros "moc_fild11" "12"
+}
+
+automacro questEden26_Cacar {
+    QuestHuntOngoing 7139 1076, 7140 1031
+    exclusive 1
+    timeout 180
+    call cacarMonstros "pay_dun00" "26"
+}
+
+automacro questEden40_Cacar {
+    QuestHuntOngoing 7148 1686, 7149 1023, 7150 1273
+    exclusive 1
+    timeout 180
+    JobLevel != 50
+    call cacarMonstros "gef_fild10" "40"
+}
+
+automacro questEden60_Cacar {
+    QuestHuntOngoing 7215 1278, 7216 1278
+    exclusive 1
+    timeout 60
+    call cacarMonstros "beach_dun2" "60"
+}
+
+macro cacarMonstros {
+    ## $.param[0] tem como valor o lockMap que o bot
+    ## vai caçar os monstros
+    if (&config(quest_eden) != em_curso) do conf -f quest_eden em_curso
+    [
+    call voltarAtacar
+    if ( &config(lockMap) != $.param[0]) do conf lockMap $.param[0]
+    do mconf $.QuestHuntOngoingLastMobID 2 0 0
+    ## $.param[1] tem como valor o lvl da quest
+    log ===========================================
+    log =caçando monstro da quest eden $.param[1]
+    log ===========================================
+    ]
+}
+
+#7217#Treino Avançado - Passo 1.3 - Comodo#SG_FEEL#QUE_NOIMAGE#
+#Romeo te passou uma última missão. Derrote Guerreiros Wootan e Dríades para conseguir alguns itens #
+#Traga 5 Ombreiras, 7 Folhas Afiadas #
+automacro questEden60__JuntarItens {
+    QuestActive 7217
+    exclusive 1
+    timeout 120
+    call {
+        do iconf 7196 5 1 0 #ombreira
+        do iconf 7100 7 1 0 #folha
+        $qtdOmbreira = &invamount (7196)
+        $qtdFolha = &invamount (7100)
+        if (&config(quest_eden) != em_curso) do conf -f quest_eden em_curso
+        do conf -f o_que_estou_fazendo quest eden 60 coletandoItens
+        
+        if ( $qtdOmbreira < 5 ) {
+            [
+            log ===========================================
+            log = coletando Ombreiras pra quest eden
+            log = tenho: $qtdOmbreira , Quero: 5 , Falta: &eval(5 - $qtdOmbreira)
+            log ===========================================
+            ]
+            do conf lockMap um_fild02
+            call voltarAtacar
+        } elsif ( $qtdOmbreira >= 5 && $qtdFolha < 7 ) {
+            [
+            log ===========================================
+            log = coletando Folha Afiada pra quest eden
+            log = tenho: $qtdFolha , Quero: 7 , Falta: &eval(7 - $qtdFolha)
+            log ===========================================
+            ]
+            do conf lockMap um_fild01
+            call voltarAtacar
+        }
+    }
+}
+
+#7217#Treino Avançado - Passo 1.3 - Comodo#SG_FEEL#QUE_NOIMAGE#
+#Romeo te passou uma última missão. Derrote Guerreiros Wootan e Dríades para conseguir alguns itens #
+#Traga 5 Ombreiras, 7 Folhas Afiadas #
+automacro questEden60__JaJunteiOsItens {
+    InInventoryID 7196 >= 5 #Ombreira
+    InInventoryID 7100 >= 7 #Folha Afiada
+    QuestActive 7217
+    CurrentHP > 80%
+    exclusive 1
+    call {
+        lock questEden60__JuntarItens
+        [
+        log ===================================
+        log Ombreira e Folha Afiada coletada
+        log vou ao npc entregar
+        log ===================================
+        ]
+        if (&config(quest_eden) != em_curso) do conf -f quest_eden em_curso
+        call pararDeAtacarApenasCorrer
+        do move um_fild01 &rand(36,38) &rand(277,279)
+        do talknpc 34 280 c #Romeo#2nd02
+        do iconf 7196 0 0 1 #ombreira
+        do iconf 7100 0 0 1 #folha
+    }
+}
+
+automacro questEden12_FinalizarCacas {
+    QuestHuntCompleted 7129 1009, 7130 1107, 7131 1001
+    exclusive 1
+    call {
+        call pararDeAtacar
+        if (&config(quest_eden) != em_curso) do conf -f quest_eden em_curso
+        do mconf $.QuestHuntCompletedLastMobID 0 0 0
+        [
+        log ===========================================
+        log =completei a caça, indo falar com o Cão falante
+        log ===========================================
+        ]
+        do move moc_fild11 &rand(181,183) &rand(254,256)
+        do talk 0 #Cão falante
+        release questEden12_Cacar
+    }
+}
+
+automacro questEden26_FinalizarCacas {
+    QuestHuntCompleted 7139 1076, 7140 1031
+    exclusive 1
+    call {
+        call pararDeAtacar
+        if (&config(quest_eden) != em_curso) do conf -f quest_eden em_curso
+        do mconf $.QuestHuntCompletedLastMobID 0 0 0
+        [
+        log ===========================================
+        log =completei a caça, indo falar com o Coral
+        log ===========================================
+        ]
+        do move pay_arche &rand(44,46) &rand(132,134)
+        #do talknpc 41 136 c c c c c #Coral
+        do talk &npc( 41 136 ) #Coral
+        release questEden26_Cacar
+    }
+}
+
+automacro questEden40_FinalizarCacas {
+    QuestHuntCompleted 7148 1686, 7149 1023, 7150 1273
+    exclusive 1
+    call {
+        call pararDeAtacar
+        if (&config(quest_eden) != em_curso) do conf -f quest_eden em_curso
+        do mconf $.QuestHuntCompletedLastMobID 0 0 0
+        [
+        log ===========================================
+        log =completei a caça, indo falar com o Absalom
+        log ===========================================
+        ]
+        do move in_orcs01 38 175 &rand(1,4)
+        #do talknpc 38 175 c c #Absalom#para07
+        do talk 0 #Absalom
+        release questEden40_Cacar
+    }
+}
+
+automacro questEden60_FinalizarCacas {
+    QuestHuntCompleted 7215 1278, 7216 1278
+    exclusive 1
+    call {
+        if (&config(quest_eden) != em_curso) do conf -f quest_eden em_curso
+        do mconf $.QuestHuntCompletedLastMobID 0 0 0
+        [
+        log ===========================================
+        log =completei a caça, indo falar com o npc do eden
+        log ===========================================
+        ]
+        switch ( $.QuestHuntCompletedLastQuestID ) {
+
+            case (= 7215) { #golem1
+                do move comodo &rand(174,176) &rand(344,346)
+                #do talknpc 173 354 c c c c c #Mémbro do grupo Éden#2n
+                do talk &npc( 173 354 )
+                release questEden60_Cacar
+            }
+
+            case (= 7216) { #golem2
+                do move um_fild01 &rand(36,38) &rand(277,279)
+                #do talknpc 34 280 c c c c #Romeo#2nd02
+                do talk &npc( 34 280 )
+                release questEden60_Cacar
+            }
+        }
+    }
+}
+
+#7132#Grupo Valhalla#SG_FEEL#QUE_NOIMAGE#
+#Você completou todas as tarefas do cão falante. Fale com o membro do Grupo Valhalla. #
+#Vá ao escritório do Grupo Valhalla #
+#7141#Grupo Valhalla#SG_FEEL#QUE_NOIMAGE#
+#Você completou todas as tarefas. Fale com o membro do Grupo Valhalla. #
+#Vá ao escritório do Grupo Valhalla #
+#7151#Grupo Valhalla#SG_FEEL#QUE_NOIMAGE#
+#Você completou todas as tarefas. Fale com o membro do Grupo Valhalla. #
+#Vá ao escritório do Grupo Valhalla #
+#7218#Reporte para Uru#SG_FEEL#QUE_NOIMAGE#
+#Você completou este passo do Grupo Éden. Você pode voltar para a sede do Grupo Éden. #
+#Reporte para Uru #
+automacro questEden_voltarDoMapaMoverPerto {
+    QuestActive 7132, 7141, 7151, 7218
+    NpcNotNear /Boya|Ur/
+	timeout 60
+    exclusive 1
+    call {
+        if (&config(quest_eden) != em_curso) do conf -f quest_eden em_curso
+        [
+        log ===========================================
+        log Completei as Caças!
+        log vamo lá pegar meus equips de direito!
+        log ===========================================
+        ]
+        
+        do conf -f o_que_estou_fazendo quest eden completada voltando para pegar equips
+        call moverPertoDosNpcEden
+    }
+}
+
+#7132#Grupo Valhalla#SG_FEEL#QUE_NOIMAGE#
+#Você completou todas as tarefas do cão falante. Fale com o membro do Grupo Valhalla. #
+#Vá ao escritório do Grupo Valhalla #
+#7141#Grupo Valhalla#SG_FEEL#QUE_NOIMAGE#
+#Você completou todas as tarefas. Fale com o membro do Grupo Valhalla. #
+#Vá ao escritório do Grupo Valhalla #
+#7151#Grupo Valhalla#SG_FEEL#QUE_NOIMAGE#
+#Você completou todas as tarefas. Fale com o membro do Grupo Valhalla. #
+#Vá ao escritório do Grupo Valhalla #
+#7218#Reporte para Uru#SG_FEEL#QUE_NOIMAGE#
+#Você completou este passo do Grupo Éden. Você pode voltar para a sede do Grupo Éden. #
+#Reporte para Uru #
+automacro questEden_voltarDoMapa {
+    QuestActive 7132, 7141, 7151, 7218
+    NpcNear /Boya|Ur/
+    exclusive 1
+    call {
+        #7132 : eden 12
+        #7141 : eden 26
+        #7151 : eden 40
+        #7218 : eden 60
+        if (&config(quest_eden) != em_curso) do conf -f quest_eden em_curso
+        [
+        log ===========================================
+        log =terminando a quest eden, falando com o npc
+        log ===========================================
+        ]
+        
+        switch ($.QuestActiveLastID) {
+
+            case (= 7132) { #eden 12
+                #do talknpc 25 35 c c c #Boya
+                do talk &npc(/Boya/)
+                do mconf 1107 1 0 0 #Filhote de lobo
+                do mconf 1001 1 0 0 #escorpiao
+                do mconf 1009 1 0 0 #Condor
+            }
+
+            case (= 7141) { #eden 26
+                #do talknpc 25 35 c c #Boya
+                do talk &npc(/Boya/)
+                do mconf 1076 1 0 0 #Esqueleto
+                do mconf 1031 1 0 0 #poporing
+                do mconf 1015 1 0 0 #Zumbi
+            }
+
+            case (= 7151) { #eden 40
+                #do talknpc 25 35 c c #Boya
+                do talk &npc(/Boya/)
+                do mconf 1023 1 0 0 #Guerreiro Orc
+                do mconf 1686 1 0 0 #Filhote de Orc
+                do mconf 1273 1 0 0 #Senhora Orc
+            }
+
+            case (= 7218) { #eden 60
+                #do talknpc 23 35 c c c #Uru
+                do talk &npc(/Ur/)
+            }
+        }
+        if (&questInactiveCount(7132, 7141, 7151, 7218) = 4) {
+            do conf -f quest_eden terminando
+        } else {
+            [
+            log ===================================
+            log = acredito que há uma treta no término da quest Éden
+            log ===================================
+            ]
+        }
+    }
+}
+automacro EdenPegandoEquips_IndoProNpc {
+    NpcNotNear /hael/i
+    ConfigKey quest_eden terminando
+    BaseLevel 12..99
+    exclusive 1
+    call {
+        do move moc_para01 48 37 #portal que antes era porta
+		do talknpc 47 39 c r0 c
+        do move moc_para01 113 32
+		do move moc_para01 &rand(109,111) &rand(94,96)
+    }
+}
+
+
+automacro questEden12e26e40_PegandoEquips {
+    ConfigKey quest_eden terminando
+	timeout 10
+    BaseLevel 12..59
+    NpcNear /hael/i
+    call {
+        [
+        log ===========================================
+        log =falando com o Mihael pra ganhar meus equips
+        log ===========================================
+        ]
+        do conf -f o_que_estou_fazendo quest eden pegando Meus Equips de Direito
+        do talk &npc(/hael/i)
+        do talk resp 0
+        do talk resp 1
+        do talk resp /$parametrosQuestEden{armaLevel26e40}/i
+
+        if ( $.lvl >= 40 ) {
+            #pegar encantamento do chapeu valhalla
+            do talk &npc(/hael/i)
+            do talk resp 2
+            do talk resp 4
+            do talk resp 0
+        }
+    }
+}
+
+automacro questEden12e26e40_acabeiDePegarEquips {
+    ConfigKey quest_eden terminando
+    BaseLevel 12..59
+    NpcNear /hael/i
+    exclusive 1
+    SimpleHookEvent item_gathered
+    call {
+        do conf -f quest_eden none
+        do conf -f o_que_estou_fazendo acabei de Terminar Quest Eden
+        
+        release equipandoArmaEden
+        release equipandoArmaduraEden
+        release equipandoBotaEden
+        release equipandoChapeuEden
+        release equipandoCapaEden
+    }
+}
+
+automacro questEden60_PegandoEquips {
+    ConfigKey quest_eden terminando
+    BaseLevel 70..98
+    timeout 10
+    NpcNear /Ferreiro|smith/i
+    call {
+        [
+        log ===========================================
+        log =falando com o ferreiro pra ganhar meus equips
+        log ===========================================
+        ]
+        do conf -f o_que_estou_fazendo quest eden 60 pegando Meus Equips de Direito
+        #do talknpc 111 83 c r2 c c r1 #Ferreiro Torhen#2nd10
+        do talk $.NpcNearLastBinId
+        do talk resp 2
+        do talk resp 1
+        do talk resp /$parametrosQuestEden{armaLevel60}/i
+    }
+}
+
+automacro questEden60_acabeiDePegarEquips {
+    ConfigKey quest_eden terminando
+    BaseLevel 70..98
+    exclusive 1
+    NpcNear /Ferreiro|smith/i
+    SimpleHookEvent item_gathered
+    call {
+        do conf -f quest_eden none
+        do conf -f o_que_estou_fazendo acabei De Terminar Quest Eden 60
+        release equipandoArmaEden
+        release equipandoArmaduraEden
+        release equipandoBotaEden
+        release equipandoChapeuEden
+        release equipandoCapaEden
+    }
+}
+
+automacro equipandoArmaEden {
+    BaseLevel 12..98 #não quero checar por armas no lvl 99, pode dar treta
+    JobIDNot 0 #aprendiz
+    JobIDNot 4023 # baby aprendiz
+    overrideAI 1
+    run-once 1
+    exclusive 1
+    call equiparArma
+}
+
+macro equiparArma {
+    
+    #se tiver alguma arma equipada e ela não for do eden ou iniciante, então não faça nada
+    if (checarSlot("rightHand") = "tem equip" && !pegarNomeDoItemEquipado(rightHand) =~ /Iniciante|Valhalla|Éden/i) {
+        stop
+    }
+	
+	# Checa se já está equipada a arma do nível 60
+    if ($.lvl >= 60 && !pegarNomeDoItemEquipado(rightHand) == $parametrosQuestEden{IDarmaEden}) {
+        log = Você já está com " pegarNomeDoItemEquipado(rightHand) " Equipada
+        stop
+    }
+    
+    if ($.lvl >= 60 && &inventory($parametrosQuestEden{IDarmaEden}) != -1) {
+        do eq &inventory($parametrosQuestEden{IDarmaEden})
+        
+    } elsif ($.lvl >= 40 && &inventory($parametrosQuestEden{IDarmaIntermediario}) != -1) {
+        do eq &inventory($parametrosQuestEden{IDarmaIntermediario})
+        
+    } elsif ($.lvl >= 26 && &inventory($parametrosQuestEden{IDarmaIniciante}) != -1) {
+        do eq &inventory($parametrosQuestEden{IDarmaIniciante})
+        
+    } elsif ($.lvl >= 1 && &inventory($parametrosQuestClasse1{equipeIniciante}) != -1) {
+        do eq &inventory($parametrosQuestClasse1{equipeIniciante})
+        
+    } else {
+        if (checarSlot("rightHand") = "ta vazio") {
+            [
+            error Erro: não foi encontrado nenhuma arma éden para equipar
+            error Seu bot ta batendo na mao
+            error A eventMacro não pode fazer nada a respeito disso
+            ]
+        } else {
+            [
+            error Erro desconhecido ao tentar encontrar uma arma para equipar
+            error Você está com " pegarNomeDoItemEquipado(rightHand) " equipado, não deveria aparecer esse erro
+            error Caso você esteja lendo isso, contate os criadores da eventMacro
+            ]
+            call informacoes
+        }
+    }
+}
+
+
+automacro equipandoArmaduraEden {
+    BaseLevel 12..98 #não quero checar por armaduras no lvl 99, pode dar treta
+    JobIDNot 0 #aprendiz
+    JobIDNot 4023 # baby aprendiz
+    overrideAI 1
+    run-once 1
+    exclusive 1
+    call equiparArmadura
+}
+
+macro equiparArmadura {
+    
+    #se tiver alguma armadura equipada e ela não for do eden ou iniciante, então não faça nada
+    if (checarSlot(armor) = "tem equip" && !pegarNomeDoItemEquipado(armor) =~ /Iniciante|Valhalla|Éden/i) {
+        stop
+    }
+    
+    #15009) #Uniforme Valhalla Iniciante
+    #15010) #Uniforme Valhalla Intermediário
+    #15011) #Uniforme Valhalla Avançado
+    #15031) #Armadura_do_Grupo_Éden#
+    if ($.lvl >= 60 && &inventory(15031) != -1) { #Armadura_do_Grupo_Éden#
+        log = Vou equipar armadura do lvl 60+
+        do eq &inventory(15031) #Armadura_do_Grupo_Éden#
+        
+    } elsif ($.lvl >= 40 && &inventory(15011) != -1) { #Uniforme Valhalla Avançado
+        log = Vou equipar armadura do lvl 40+
+        do eq &inventory(15011) #Uniforme Valhalla Avançado
+        
+    } elsif ($.lvl >= 26 && &inventory(15010) != -1) { #Uniforme Valhalla Intermediário
+        log = Vou equipar armadura do lvl 26+
+        do eq &inventory(15010) #Uniforme Valhalla Intermediário
+        
+    } elsif ($.lvl >= 12 && &inventory(15009) != -1) { #Uniforme Valhalla Iniciante
+        log = Vou equipar armadura do lvl 12+ que não é eden mas é bom
+        do eq &inventory(15009) #Uniforme Valhalla Iniciante
+        
+    }
+    #sem um else aqui, porque se o slot tiver vazio, e não tiver nenhum do éden, fodas, ninguém liga
+}
+
+automacro equipandoBotaEden {
+    BaseLevel 12..98 #não quero checar por armas no lvl 99, pode dar treta
+    JobIDNot 0 #aprendiz
+    JobIDNot 4023 # baby aprendiz
+    overrideAI 1
+    run-once 1
+    exclusive 1
+    call equiparBota
+}
+
+macro equiparBota {
+    
+    #se tiver alguma bota equipada e ela não for do eden ou iniciante, então não faça nada
+    if (checarSlot(rightHand) = "tem equip" && !pegarNomeDoItemEquipado(rightHand) =~ /Iniciante|Valhalla|Éden/i) {
+        stop
+    }
+    
+    # 2456) #Botas Valhalla Iniciante
+    # 2457) #Botas Valhalla Intermediárias
+    # 2458) #Botas Valhalla Avançadas
+    # 2473) ##Botas_IV_do_Grupo_Éden#
+    if ($.lvl >= 60 && &inventory(2473) != -1) { ##Botas_IV_do_Grupo_Éden#
+        log = Vou equipar bota do lvl 60+
+        do eq &inventory(2473) ##Botas_IV_do_Grupo_Éden#
+        
+    } elsif ($.lvl >= 40 && &inventory(2458) != -1) { #Botas Valhalla Avançadas
+        log = Vou equipar bota do lvl 40+
+        do eq &inventory(2458) #Botas Valhalla Avançadas
+        
+    } elsif ($.lvl >= 26 && &inventory(2457) != -1) { #Botas Valhalla Intermediárias
+        log = Vou equipar bota do lvl 26+
+        do eq &inventory(2457) #Botas Valhalla Intermediárias
+        
+    } elsif ($.lvl >= 12 && &inventory(2456) != -1) { #Botas Valhalla Iniciante
+        log = Vou equipar bota do lvl 12+ que não é eden mas é bom
+        do eq &inventory(2456) #Botas Valhalla Iniciante
+        
+    }
+    #sem um else aqui, porque se o slot tiver vazio, e não tiver nenhum do éden, fodas, ninguém liga
+}
+
+automacro equipandoChapeuEden {
+    BaseLevel 12..98 #não quero checar por armas no lvl 99, pode dar treta
+    JobIDNot 0 #aprendiz
+    JobIDNot 4023 # baby aprendiz
+    overrideAI 1
+    run-once 1
+    exclusive 1
+    call equiparChapeu
+}
+
+macro equiparChapeu {
+    
+    #se tiver algum chapeu equipado e ele não for do eden ou iniciante, então não faça nada
+    if (checarSlot(topHead) = "tem equip" && !pegarNomeDoItemEquipado(topHead) =~ /Iniciante|Valhalla|Éden/i) {
+        stop
+    }
+    
+    if ($.lvl >= 60 && &inventory(18514) != -1) { #Chapéu_II_do_Grupo_Éden#
+        log = Vou equipar chapeu do lvl 60+
+        do eq &inventory(18514) #Chapéu_II_do_Grupo_Éden#
+        
+    } elsif ($.lvl >= 12 && &inventory(5583) != -1) { #Chapeu Valhalla
+        log = Vou equipar chapeu do lvl 12+
+        do eq &inventory(5583) #Chapeu Valhalla
+        
+    }
+    #sem um else aqui, porque se o slot tiver vazio, e não tiver nenhum do éden, fodas, ninguém liga
+}
+
+automacro equipandoCapaEden {
+    BaseLevel 12..98 #não quero checar por armas no lvl 99, pode dar treta
+    JobIDNot 0 #aprendiz
+    JobIDNot 4023 # baby aprendiz
+    overrideAI 1
+    run-once 1
+    exclusive 1
+    call equiparCapa
+}
+
+macro equiparCapa {
+    
+    #se tiver alguma capa equipada e ela não for do eden ou iniciante, então não faça nada
+    if (checarSlot(robe) = "tem equip" && !pegarNomeDoItemEquipado(robe) =~ /Iniciante|Valhalla|Éden/i) {
+        stop
+    }
+    
+    if ($.lvl >= 60 && &inventory(2571)  != -1) { #Capa II do Grupo Eden
+        log = Vou equipar chapeu do lvl 60+
+        do eq &inventory(2571) #Capa II do Grupo Eden
+        
+    } elsif ($.lvl >= 12 && &inventory(2560) != -1) { #Capa Valhalla
+        log = Vou equipar chapeu do lvl 12+
+        do eq &inventory(2560) #Capa Valhalla
+        
+    }
+    #sem um else aqui, porque se o slot tiver vazio, e não tiver nenhum do éden, fodas, ninguém liga
+}
+
+#
+#
+#
+# FIM DAS QUESTS EDEN
+#
+
+
+automacro questRenascer_chegueilvl99 {
+    BaseLevel = 99
+    JobLevel = 50
+    JobID $parametrosClasses{idC2}, $parametrosClasses{idC2Alt}
+    CharCurrentWeight != 0
+    Zeny != 1285000
+    Zeny != 0
+    exclusive 1
+    timeout 60
+    ConfigKey questRenascer_estagio none
+    macro_delay 2
+    QuestInactive 1000
+    call {
+        if ($parametrosQuestClasseRenascer{renascer} = nao) {
+            [
+            log ESTOU LVL 99 MAS FUI CONFIGURADO PRA NAO REBORNAR
+            log É BOM CASO VC QUEIRA FARMAR ZENY COM CLASSE 2
+            log SE QUISER REBORNAR, PROCURE POR :
+            log renascer => nao
+            log E TROQUE POR sim
+            ]
+            lock questRenascer_chamarAmigo
+        } else {
+            do pm "$parametrosQuestClasseRenascer{amigo}" ajudaRebornar
+            log peso atual: $.weight
+            log peso percentual: $.weightpercent
+            [
+            do conf dealAuto 3
+            do conf dealAuto_names $parametrosQuestClasseRenascer{amigo}
+            do iconf 2301 0 1 0 # Camisa de Algodão
+            do iconf 1201 0 1 0 # Faca [3]
+
+            # é uma forma que eu pensei de desabilitar TODOS os getAuto
+            # independente de quantos hajam
+            $continuarLoop = sim
+            $i = 0
+            while ($continuarLoop = sim) {
+                if (checarSeExisteNoConfig("getAuto_$i_disabled") = sim) {
+                    do conf getAuto_$i_disabled 1
+                } else {
+                    $continuarLoop = nao
+                }
+                $i++
+            }
+            #desabilitar TODOS os buyAuto
+            $continuarLoop = sim
+            $i = 0
+            while ($continuarLoop = sim) {
+                if (checarSeExisteNoConfig("buyAuto_$i_disabled") = sim) {
+                    do conf buyAuto_$i_disabled 1
+                } else {
+                    $continuarLoop = nao
+                }
+                $i++
+            }
+            do conf lockMap none
+            do conf attackAuto -1
+            do conf route_randomWalk 0
+            do conf relogAfterStorage 0
+            do conf storageAuto 1
+            do conf storageAuto_npc yuno 152 187
+            do conf sellAuto 1
+            do conf sellAuto_npc yuno_in01 25 34
+            ]
+            #desequipando tudo
+            @slots = (topHead, midHead, lowHead, rightHand, leftHand, armor, robe, shoes, rightAccessory, leftAccessory, arrow)
+            
+            $i = 0
+            while ($i < @slots) {
+                log = desequipando equip do slot $slots[$i]
+                desequipar("$slots[$i]")
+                pause 0.5
+                $i++
+            }
+            [
+            log ============================
+            log TENTANDO FICAR COM 0 DE PESO
+            log ============================
+            ]
+            do conf -f o_que_estou_fazendo tentandoRebornar
+            do conf -f questRenascer_estagio preparando
+        }
+    }
+}
+
+automacro questRenascer_salvarNaCidadeQueVouUparEDefinirVariavel {
+    ConfigKey questRenascer_estagio preparando
+    exclusive 1
+    priority 20 #prioridade mais alta
+    run-once 1
+    QuestInactive 1000
+    call {
+        #essa automacro tem por objetivo, salvar seu personagem
+        #na cidade em que ele vai upar quando tiver lvl 1 renascido
+        #evita problemas de o char lvl 1 morrer e voltar pra juno
+        #sem dinheiro pra ir pro mapa certo
+        #pega o mapa do lvl 1
+        %mapa = extrairMapasDeUp(1, "sim") # o "sim" representa que queremos os mapa de up de transclasse
+        $mapaQueVouUparNolvl1 = $mapa{saveMap}
+        if (&config(saveMap) != $mapaQueVouUparNolvl1) {
+            call salvarNaCidade "$mapaQueVouUparNolvl1"
+        }
+    }
+}
+
+automacro questRenascer_chamarAmigo {
+    exclusive 1
+    timeout 60
+    JobID $parametrosClasses{idC2}, $parametrosClasses{idC2Alt}
+    ConfigKey questRenascer_estagio preparando
+    Zeny != 1285000
+    Zeny != 0
+    ConfigKey saveMap $mapaQueVouUparNolvl1
+    ConfigKeyNot naSequenciaDeSalvamento true
+    CharCurrentWeight != 0
+    CheckOnAI auto,manual
+    BaseLevel = 99
+    JobLevel = 50
+    priority 25 #prioridade alta
+    QuestInactive 1000
+    call {
+        $vezesQueTentouZerarPeso++
+        if ($.statushandle =~ /EFST_RIDING/i) do pecopeco release
+        #TODO adicionar uma linha pra remover falcão
+        #TODO adicionar outra linha para vaporizar homunculo
+        if ( $vezesQueTentouZerarPeso > 2 ) {
+            [
+            log já tentei ficar com peso zero,
+            log pra poder rebornar
+            log mas sem sucesso, esvazie seu bot manualmente
+            log (provavelmente algum item configurado pra não guardar
+            log tipo pots ou os itens da quest 2 ou sei lá)
+            log quando tiver terminado, feche e abra o openkore novamente
+            ]
+            do ai manual
+            lock chamarAmigo
+            do conf -f o_que_estou_fazendo tentandoRebornar_aindaEstouComPeso
+            stop
+        }
+        do ai on
+        @falas = (da um help pra rebornar, ajudaRebornar, preciso de ajuda pra rebornar)
+        do pm "$parametrosQuestClasseRenascer{amigo}" $falas[&rand(0,2)]
+        
+        do iconf 502 0 1 0
+        do conf storageAuto_npc yuno 152 187
+        do conf sellAuto_npc yuno_in01 25 34
+        #esvazia tudo pra ficar com 0 de peso
+        do autosell #se bem me lembro, ele da autostorage logo depois, o que é bom
+        do autostorage
+    }
+}
+
+automacro questRenascer_irNoLocalPraNegociar {
+    BaseLevel = 99
+    JobLevel = 50
+    overrideAI 1
+    ConfigKey saveMap $mapaQueVouUparNolvl1
+    CharCurrentWeight = 0
+    ConfigKey questRenascer_estagio preparando
+    Zeny != 1285000 #vamos ficar com o zeny certo
+    Zeny != 0
+    exclusive 1
+    IsNotInMapAndCoordinate $parametrosQuestClasseRenascer{pontoDeEncontroX} $parametrosQuestClasseRenascer{pontoDeEncontroY}
+    QuestInactive 1000
+    call {
+        do conf storageAuto_npc yuno 152 187
+        do conf sellAuto_npc yuno_in01 25 34
+        $vezesQuePediPraVir++
+        if ($vezesQuePediPraVir > 2) {
+            do pm "$parametrosQuestClasseRenascer{amigo}" vou ficar spammando isso ate vc chegar perto de mim
+        }
+        
+        do pm "$parametrosQuestClasseRenascer{amigo}" vem aqui em juno $parametrosQuestClasseRenascer{pontoDeEncontroX} $parametrosQuestClasseRenascer{pontoDeEncontroY}
+        do pm "$parametrosQuestClasseRenascer{amigo}" quando chegar, negocia comigo
+        #movendo pra local especifico
+        do move yuno $parametrosQuestClasseRenascer{pontoDeEncontroX} $parametrosQuestClasseRenascer{pontoDeEncontroY} &rand(1,2)
+    }
+}
+
+automacro questRenascer__amigoPertoMasNaoTaoPerto {
+    CharCurrentWeight 0
+    Zeny != 1285000
+    priority 25
+    ConfigKey questRenascer_estagio preparando
+    InMap yuno
+    IsInMapAndCoordinate $parametrosQuestClasseRenascer{pontoDeEncontroX} $parametrosQuestClasseRenascer{pontoDeEncontroY}
+    PlayerNearDist /\Q$parametrosQuestClasseRenascer{amigo}\E/ >= 3
+    timeout 20
+    QuestInactive 1000
+    call {
+        undef @frasesRandom
+        
+        &push(@frasesRandom, ow chega mais manin)
+        &push(@frasesRandom, aqui nao consigo negociar a essa distancia nao uai)
+        &push(@frasesRandom, então... se vc nao chegar mais perto não vai rolar)
+        &push(@frasesRandom, cola aqui ze chega mais)
+        &push(@frasesRandom, vem ca)
+        &push(@frasesRandom, ow vai ficar longe assim mesmo? cole ze)
+        
+        $i = &rand(0,5)
+        do pm "$parametrosQuestClasseRenascer{amigo}" $frasesRandom[$i]
+    }
+}
+
+automacro questRenascer_amigoPertoPedindoTrade {
+    CharCurrentWeight 0
+    Zeny != 1285000
+    priority 25
+    ConfigKey questRenascer_estagio preparando
+    InMap yuno
+    IsInMapAndCoordinate $parametrosQuestClasseRenascer{pontoDeEncontroX} $parametrosQuestClasseRenascer{pontoDeEncontroY}
+    PlayerNearDist /\Q$parametrosQuestClasseRenascer{amigo}\E/ < 3
+    timeout 20
+    QuestInactive 1000
+    call {
+        lock questRenascer_irNoLocalPraNegociar
+        do conf -f o_que_estou_fazendo tentandoRebornar_esperandoNegociação
+        log posição do $parametrosQuestClasseRenascer{amigo}: $.PlayerNearLastDist
+        if (&eval(defined %::incomingDeal) ? 1 : 0) {
+            [
+            log ele acabou de me mandar deal
+            log aceitando
+            ]
+            do deal
+        } else {
+            do deal &player($parametrosQuestClasseRenascer{amigo})
+        }
+    }
+}
+
+automacro questRenascer_amigoPertoRecebiTrade {
+    CharCurrentWeight 0
+    Zeny != 1285000
+    priority 25
+    ConfigKey questRenascer_estagio preparando
+    InMap yuno
+    PlayerNearDist /\Q$parametrosQuestClasseRenascer{amigo}\E/ < 3
+    timeout 10
+    SimpleHookEvent incoming_deal
+    macro_delay 0.2
+    QuestInactive 1000
+    call {
+        lock questRenascer_irNoLocalPraNegociar
+        pause 1
+        do deal
+    }
+}
+
+automacro questRenascer_dandoOuReceBendoZeny {
+    CharCurrentWeight 0
+    Zeny != 1285000
+    ConfigKey questRenascer_estagio preparando
+    PlayerNearDist /\Q$parametrosQuestClasseRenascer{amigo}\E/ < 3
+    SimpleHookEvent engaged_deal
+    priority 25
+    QuestInactive 1000
+    call {
+        lock questRenascer_amigoPertoPedindoTrade
+        pause 3
+        $zenyPraDar = &eval($.zeny - 1285000)
+        if ( $zenyPraDar > 0) {
+            pause 2
+            #se o zeny atual for maior que 1285000, vc dá o excedente pro mercador
+            do deal add z $zenyPraDar
+            do pm "$parametrosQuestClasseRenascer{amigo}" coloquei o zeny, finaliza ai
+        } else {
+            #se o zeny atual for menor que 1285000, vc manda pro mercador via pm quanto mais precisa
+            $zenyQuePreciso = &eval(1285000 - $.zeny)
+            do pm "$parametrosQuestClasseRenascer{amigo}" preciso da quantia de exatamente $zenyQuePreciso zenys
+        }
+        do deal
+        pause 3
+        do deal
+    }
+}
+
+automacro questRenascer_finalizarTrade {
+    SimpleHookEvent finalized_deal
+    PlayerNearDist /\Q$parametrosQuestClasseRenascer{amigo}\E/ < 3
+    CharCurrentWeight 0
+    Zeny != 1285000
+    ConfigKey questRenascer_estagio preparando
+    QuestInactive 1000
+    call {
+        do deal
+    }
+}
+
+automacro questRenascer_tudoCertoVamosRebornar {
+    BaseLevel = 99
+    JobLevel = 50
+    CharCurrentWeight = 0
+    Zeny = 1285000
+    exclusive 1
+    ConfigKeyNot questRenascer_estagio 1
+    ConfigKeyNot questRenascer_estagio 2
+    ConfigKeyNot questRenascer_estagio 3
+    ConfigKeyNot questRenascer_estagio 4
+    QuestInactive 1000
+    call {
+        do conf -f o_que_estou_fazendo indoRebornar!!!
+        [
+        do ai auto
+        do conf lockMap nada
+        call pararDeAtacar
+        do conf sitAuto_idle 0
+        ]
+        # se tiver tudo certinho pra começar o reborn ,essa automacro ativa
+        do conf -f questRenascer_estagio 1
+        release questRenascer_amigoPertoPedindoTrade
+    }
+}
+
+automacro questRenascer__primeiroEstagio {
+    ConfigKey questRenascer_estagio 1
+    InMap yuno, yuno_in02
+    exclusive 1
+    QuestInactive 1000
+    call {
+        do move yuno_in02
+        if ($.map = yuno_in02) do conf questRenascer_estagio 2
+    }
+}
+
+automacro questRenascer_primeiroEstagio_bugada {
+    ConfigKey questRenascer_estagio 1
+    NotInMap yuno
+    NotInMap yuno_in02
+    NotInMap yuno_in05
+    exclusive 1
+    call {
+        log bugs e mais bugs
+        log resolvendo
+        do move yuno
+    }
+}
+
+automacro questRenascer_pagarTaxa {
+    ConfigKey questRenascer_estagio 2
+    Zeny = 1285000
+    exclusive 1
+    QuestInactive 1000
+    call {
+        do move yuno_in02 90 166
+        ####do talknpc 88 164 c w1 c w1 c w1 r0
+        do talk &npc(/Metheus /)
+        do talk resp 0
+    }
+}
+
+automacro questRenascer_lerOLivroEDescer {
+    ConfigKey questRenascer_estagio 2
+    InMap yuno_in02
+    exclusive 1
+    Zeny = 0
+    call {
+        do move 93 202
+        ####do talknpc 93 207 c w1 c w1 c w1 c w1 c w1 c w1 c w1 c
+        do talk &npc(93 207)
+        do move yuno_in05
+        if ($.map = yuno_in05) do conf questRenascer_estagio 3
+    }
+}
+
+automacro questRenascer_terceiroEstagio {
+    ConfigKey questRenascer_estagio 3
+    InMap yuno_in05
+    exclusive 1
+    call {
+        while ($.pos != 41 42) {
+            if ( $.pos == 15 185 ) do move 50 85
+            if ( $.pos == 50 85 ) do move 41 42
+            $randCoord = &random("15 185", "50 85", "41 42")
+            if ( $.pos != 41 42 || $.pos != 50 85 || $.pos != 15 185 ) do move $randCoord
+        }
+        if ( $.pos == 41 42 ) {
+            do talknpc 49 43 c
+            if ($.map = valkyrie) {
+                do conf questRenascer_estagio 4
+            } else {
+                #if map is not valkyrie, try a different way to talk to npc
+                do talk 0
+                
+                #if still doesn't inside valkyrie map, then throw error
+                if ($.map != valkyrie) {
+                    [
+                    error Ocorreu um erro ao tentar entrar no mapa de rebornar
+                    error Contate os criadores da eventMacro ou post no fórum esse erro
+                    ]
+                    call informacoes
+                }
+            }
+        }
+    }
+}
+
+automacro questRenascer_terceiroEstagio_bugada {
+    ConfigKey questRenascer_estagio 3
+    InMap yuno_in02
+    exclusive 1
+    call {
+        do move yuno_in05
+    }
+}
+
+automacro questRenascer_ultimoEstagio {
+    ConfigKey questRenascer_estagio 4
+    InMap valkyrie
+    exclusive 1
+    call {
+        if ($.statushandle =~ /EFST_RIDING/i) do pecopeco release
+        if ($.statushandle =~ /EFST_FALCON/i) do falcon release
+        if ($.statushandle =~ /EFST_CART/i) do cart release
+        if (&eval(return $::char->{skills}{'AM_BIOETHICS'} ? 1 : 0) = 1) do ss 244 #colocando homunculo pra descansar
+        do move 49 86
+        do conf skillsAddAuto_list none
+        do conf statsAddAuto_list none
+        do talk &npc(48 86)
+        do conf questRenascer_estagio none
+        call atualizarBuild
+        do conf -f o_que_estou_fazendo acabeiDeRebornar
+        [
+        log =========================================
+        log REBORNEEEEEEEEEEEEEEEEEEEEEEEEEEEEEI
+        log =========================================
+        ]
+    }
+}
+
+automacro questRenascer_ultimoEstagio_bugada {
+    ConfigKey questRenascer_estagio 4
+    BaseLevel = 99
+    JobLevel = 50
+    NotInMap valkyrie
+    exclusive 1
+    timeout 10
+    call {
+        [
+        error ===================================
+        error = existe um problema na eventMacro de rebornar
+        error = nesse momento ele deveria estar no mapa 'valkyrie'
+        error = que é onde fica a valquíria, mas ele está em $.map
+        error = contate os criadores da eventMacro e mostre o erro
+        error ===================================
+        ]
+    }
+}
+
+automacro questRenascer_renasci {
+    BaseLevel != 99
+    exclusive 1
+    ConfigKeyNot questRenascer_estagio none
+    call {
+        do conf questRenascer_estagio none
+        call atualizarBuild
+    }
+}
+
+macro salvarNaCidade {
+    call pararDeAtacar
+    do conf lockMap none
+    if (&config(master) =~ /Valhalla/ ) {
+        do conf -f saveMap_sequenciaPraArmazenar r1 r0
+    } else  {
+        do conf -f saveMap_sequenciaPraArmazenar r1
+    }
+    switch ($.param[0]) {
+        case (=~ /einbroch/i ) {
+            do conf -f saveMap_desejado einbroch
+            do conf -f saveMap_posicaoKafra 242 205
+            do conf -f saveMap_posicaoNpcVenda einbroch 224 207
+            do conf -f saveMap_posicaoNpcPraPocao ein_in01 189 15
+        }
+        case (=~ /aldebaran/i ) {
+            do conf -f saveMap_desejado aldebaran
+            do conf -f saveMap_posicaoKafra 143 119
+            do conf -f saveMap_posicaoNpcVenda aldebaran 165 107
+            do conf -f saveMap_posicaoNpcPraPocao aldeba_in 94 56
+        }
+        case (=~ /juno|yuno/i ) {
+            do conf -f saveMap_desejado yuno
+            do conf -f saveMap_posicaoKafra 152 187
+            do conf -f saveMap_posicaoNpcVenda yuno 163 187
+            do conf -f saveMap_posicaoNpcPraPocao yuno 218 97
+        }
+        case (=~ /rachel/i ) {
+            do conf -f saveMap_desejado rachel
+            do conf -f saveMap_posicaoKafra 109 138
+            do conf -f saveMap_posicaoNpcVenda ra_in01 257 269
+            do conf -f saveMap_posicaoNpcPraPocao ra_in01 257 269
+        }
+        case (=~ /comodo/i ) {
+            do conf -f saveMap_desejado comodo
+            do conf -f saveMap_posicaoKafra 195 150
+            do conf -f saveMap_posicaoNpcVenda cmd_in01 79 182
+            do conf -f saveMap_posicaoNpcPraPocao moc_ruins 114 63
+        }
+        case (=~ /prontera/i ) {
+            do conf -f saveMap_desejado prontera
+            do conf -f saveMap_posicaoKafra 151 29
+            do conf -f saveMap_posicaoNpcVenda prontera 113 42
+            do conf -f saveMap_posicaoNpcPraPocao prt_in 126 76
+        }
+		case (=~ /louyang/i ) {
+            do conf -f saveMap_desejado louyang
+            do conf -f saveMap_posicaoKafra 210 104
+            do conf -f saveMap_posicaoNpcVenda lou_in02 239 176
+            do conf -f saveMap_posicaoNpcPraPocao lou_in02 239 176
+        }
+        case (=~ /payon/i ) {
+            do conf -f saveMap_desejado payon
+            do conf -f saveMap_posicaoKafra 181 104
+            do conf -f saveMap_posicaoNpcVenda payon 159 96
+            do conf -f saveMap_posicaoNpcPraPocao payon_in01 5 49
+        }
+        case (=~ /geffen/i ) {
+            do conf -f saveMap_desejado geffen
+            do conf -f saveMap_posicaoKafra 120 62
+            do conf -f saveMap_posicaoNpcVenda geffen_in 74 144
+            do conf -f saveMap_posicaoNpcPraPocao geffen_in 77 167
+        }
+        case (=~ /morocc|morroc|morooc/i ) {
+            do conf -f saveMap_desejado morocc
+            do conf -f saveMap_posicaoKafra 156 97
+            do conf -f saveMap_posicaoNpcVenda morocc_in 141 67
+            do conf -f saveMap_posicaoNpcPraPocao moc_ruins 114 63
+        }
+        case (=~ /izlude/i ) {
+            do conf -f saveMap_desejado izlude
+            do conf -f saveMap_posicaoKafra 128 148
+            do conf -f saveMap_posicaoNpcVenda izlude 105 99
+            do conf -f saveMap_posicaoNpcPraPocao izlude_in 115 61
+        }
+        case ( =~ /veins/i ) {
+            do conf -f saveMap_desejado veins
+            do conf -f saveMap_posicaoKafra 208 128
+            do conf -f saveMap_posicaoNpcVenda ve_in 243 303
+            do conf -f saveMap_posicaoNpcPraPocao ve_in 243 303
+        }
+        case (=~ /alberta/i ) {
+            do conf -f saveMap_desejado alberta
+            do conf -f saveMap_posicaoKafra 113 60
+            do conf -f saveMap_posicaoNpcVenda alberta_in 182 97
+            do conf -f saveMap_posicaoNpcPraPocao alberta_in 182 97
+        }
+        case ( =~ /hugel/i ) {
+            do conf -f saveMap_desejado hugel
+            do conf -f saveMap_posicaoKafra 88 168
+            do conf -f saveMap_posicaoNpcVenda hugel 77 167
+            do conf -f saveMap_posicaoNpcPraPocao # não tem infelizmente!
+        }
+        else {
+            [
+            log =====================================
+            log = nome da cidade inválido, tente novamente...
+            log = nome é: $.param[0]
+            log = Talvez o nome foi escrito errado?
+            log =====================================
+            ]
+            stop
+        }
+    }
+
+    [
+    log =============================================
+    log =Iniciando seguência de salvamento em &config(saveMap_desejado)
+    log =============================================
+    ]
+    do ai manual
+    do conf -f o_que_estou_fazendo indoSalvarem $.param[0]
+    do conf -f naSequenciaDeSalvamento true
+
+}
+
+automacro definirVariavelSaveMap {
+    exclusive 1
+    run-once 1
+    ConfigKeyNot saveMap_desejado           none
+    ConfigKeyNot saveMap_posicaoKafra       none
+    ConfigKeyNot saveMap_posicaoNpcVenda    none
+    ConfigKey naSequenciaDeSalvamento true
+    priority 26
+    CheckOnAI auto, manual
+    call {
+        $saveMap = &config(saveMap_desejado)
+        do ai manual
+    }
+}
+
+automacro salvarNaCidade_bugged {
+    exclusive 1
+    ConfigKey saveMap_desejado           none
+    ConfigKey saveMap_posicaoKafra       none
+    ConfigKey saveMap_posicaoNpcVenda    none
+    ConfigKey naSequenciaDeSalvamento true
+    CheckOnAI auto, manual
+    call {
+        [
+        log ===================================
+        log = tem algum bug bem sério
+        log = tentando resolver
+        log ===================================
+        ]
+        do conf -f naSequenciaDeSalvamento false
+    }
+}
+
+automacro jaToSalvoNessaCidade {
+    exclusive 1
+    ConfigKey naSequenciaDeSalvamento true
+    ConfigKey saveMap $saveMap
+	timeout 300
+    CheckOnAI manual
+    ConfigKeyNot saveMap_desejado none
+    call {
+        [
+        log ==============================================
+        log já esta salvo em $saveMap , nao precisa fazer a sequencia toda denovo
+        log mas só por precaução, as configurações serão feitas
+        log ==============================================
+        ]
+
+        do conf saveMap $saveMap
+        do conf storageAuto_npc $saveMap &config(saveMap_posicaoKafra)
+        do conf storageAuto 1
+        do conf sellAuto 1
+        do conf sellAuto_npc &config(saveMap_posicaoNpcVenda)
+        do conf storageAuto_npc_type 3
+        do conf storageAuto_npc_steps &config(saveMap_sequenciaPraArmazenar)
+
+        do conf saveMap $saveMap
+        do conf saveMap_sequenciaPraArmazenar none
+        do conf saveMap_desejado none
+        do conf saveMap_posicaoKafra none
+        do conf saveMap_posicaoNpcVenda none
+        do conf saveMap_posicaoNpcPraPocao none
+        do conf naSequenciaDeSalvamento false
+        do ai on
+        release definirVariavelSaveMap
+    }
+}
+
+automacro movendoPraKafraForaDaCidade {
+    exclusive 1
+    CheckOnAI manual
+    ConfigKey naSequenciaDeSalvamento true
+    ConfigKeyNot saveMap_desejado none
+    ConfigKeyNot saveMap $saveMap
+    NotInMap $saveMap
+    call move_to_near_kafra
+}
+
+automacro movendoPraKafraDentroDaCidade {
+    exclusive 1
+    CheckOnAI manual
+    ConfigKeyNot saveMap $saveMap
+    ConfigKeyNot saveMap_desejado none
+    NpcNotNear /Kafra Employee|Funcionária Kafra|Corp.|Kafra Recepc/
+    InMap $saveMap
+    call move_to_near_kafra
+}
+
+macro move_to_near_Kafra {
+    log estou indo para a kafra em $saveMap &config(saveMap_posicaoKafra)
+    do move $saveMap &config(saveMap_posicaoKafra) &random("1","2","3","4","5")
+}
+
+automacro FalarComKafra {
+    CheckOnAI manual
+    ConfigKey naSequenciaDeSalvamento true
+    ConfigKeyNot saveMap $saveMap
+    ConfigKeyNot saveMap_desejado none
+    InMap $saveMap
+    NpcNear /Kafra Employee|Funcionária Kafra|Corp.|Kafra Recepc/
+    delay 2
+    timeout 20
+    call {
+        log ===============================================
+        log Falando com kafra na posição: &config(saveMap_posicaoKafra)
+        log ===============================================
+        do talknpc &config(saveMap_posicaoKafra) r0
+    }
+}
+
+automacro SalvoNaKafra {
+    exclusive 1
+    CheckOnAI manual
+    priority 25
+    NpcMsgName /O seu Ponto (de Retorno )?foi salvo|saved here|foi salvo aqui na cidade|foi salvo em|foi salvo aqui/ /Kafra Employee|Funcionária Kafra|Corp|Kafra Recepc/
+    ConfigKeyNot saveMap $saveMap
+    ConfigKey naSequenciaDeSalvamento true
+    InMap $saveMap
+    call {
+        [
+        if (&config(storageAuto) != 1) do conf storageAuto 1
+        if (&config(sellAuto) != 1) do conf sellAuto 1
+        if (&config(storageAuto_npc_type) != 3) do conf storageAuto_npc_type 3
+        do conf storageAuto_npc_steps &config(saveMap_sequenciaPraArmazenar) if (&config(storageAuto_npc_steps) != &config(saveMap_sequenciaPraArmazenar))
+        do conf saveMap $saveMap
+        do conf storageAuto_npc $saveMap &config(saveMap_posicaoKafra)
+        do conf sellAuto_npc &config(saveMap_posicaoNpcVenda)
+        ]
+        
+        #felizmente TODOS os npcs que vendem poção amarela, também vendem flecha normal
+        $continuarLoop = sim
+        $i = 0
+        while ($continuarLoop = sim && &config(saveMap_posicaoNpcPraPocao) != -1) {
+            
+            if (&config(buyAuto_$i) =~ /Poção|Flecha/i) {
+                [
+                log ===================================
+                log = configurando bloco "buyAuto_$i"
+                log ===================================
+                ]
+                do conf buyAuto_$i_npc &config(saveMap_posicaoNpcPraPocao)
+            }
+
+            if (checarSeExisteNoConfig("buyAuto_$i") = nao) {
+                $continuarLoop = nao
+            } elsif (&config(buyAuto_$i) = -1) {
+                $continuarLoop = nao
+            }
+            $i++
+        }
+
+        [
+        do conf saveMap_sequenciaPraArmazenar none
+        do conf saveMap_desejado none
+        do conf saveMap_posicaoKafra none
+        do conf saveMap_posicaoNpcVenda none
+        do conf saveMap_posicaoNpcPraPocao none
+        do conf naSequenciaDeSalvamento false
+        
+        release definirVariavelSaveMap
+        do ai on
+
+        log ================================
+        log =Salvo em &config(saveMap)
+        log ================================
+        ]
+        do conf -f o_que_estou_fazendo acabeiDeSalvarNaKafraDe $saveMap
+    }
+}
+
+automacro saveMapNone {
+    ConfigKey saveMap none
+    exclusive 1
+    JobIDNot 0
+    JobIDNot 4023
+    call {
+        do conf -f saveMap indefinido
+    }
+}
+#
+#
+#
+# FIM DA MACRO DE SALVAR NA KAFRA
+#
+
+automacro usarPocaoDeAprendiz {
+    ConfigKeyNot useSelf_item_1 Poção de Aprendiz
+    InInventory "Poção de Aprendiz" > 0
+    exclusive 1
+    call {
+        log parece que tenho poção de aprendiz, mas ainda não foi configurado pra ser usado
+        log mudando isso
+        $potName = pegarNomePeloIdDoItem(569)
+        do conf useSelf_item_1 $potName
+        do conf useSelf_item_1_disabled 0
+        do conf useSelf_item_1_hp < 60%
+        do conf getAuto_0 $potName
+        do conf getAuto_0_minAmount 20
+        do conf getAuto_0_maxAmount 200
+        do conf getAuto_0_passive 0
+        log pronto
+    }
+}
+
+automacro parandoDePegarPotDeAprendiz {
+    InInventoryID 569 < 1
+    InStorageID 569 < 1
+    ConfigKey useSelf_item_1 Poção de Aprendiz
+    exclusive 1
+    call {
+        [
+        log ===================================
+        log = as poções de aprendiz acabaram,
+        log = removendo o getAuto
+        log ===================================
+        ]
+        #parar de tentar usar tambem
+        do conf sitAuto_hp_upper 80
+        do conf getAuto_0 none
+        if (&config(useSelf_item_1) =~ /Aprendiz/) do conf useSelf_item_1 none
+    }
+}
+
+sub adicionaAttackSkillSlot {
+    open (my $fh, '>>:encoding(UTF-8)', Settings::getConfigFilename());
+    print $fh "attackSkillSlot {\n";
+    print $fh "\tlvl\n";
+    print $fh "\tdist\n";
+    print $fh "\tmaxCastTime 0\n";
+    print $fh "\tminCastTime 0\n";
+    print $fh "\thp\n";
+    print $fh "\tsp\n";
+    print $fh "\thomunculus_hp\n";
+    print $fh "\thomunculus_sp\n";
+    print $fh "\thomunculus_dead\n";
+    print $fh "\tonAction\n";
+    print $fh "\twhenStatusActive\n";
+    print $fh "\twhenStatusInactive\n";
+    print $fh "\twhenFollowing\n";
+    print $fh "\tspirit\n";
+    print $fh "\tamuletType\n";
+    print $fh "\taggressives\n";
+    print $fh "\tpreviousDamage\n";
+    print $fh "\tstopWhenHit 0\n";
+    print $fh "\tinLockOnly 0\n";
+    print $fh "\tnotInTown 0\n";
+    print $fh "\ttimeout 0\n";
+    print $fh "\tdisabled 0\n";
+    print $fh "\tmonsters\n";
+    print $fh "\tnotMonsters\n";
+    print $fh "\tmonstersCount\n";
+    print $fh "\tmaxAttempts\n";
+    print $fh "\tmaxUses\n";
+    print $fh "\ttarget_hp\n";
+    print $fh "\ttarget_whenStatusActive\n";
+    print $fh "\ttarget_whenStatusInactive\n";
+    print $fh "\ttarget_deltaHp\n";
+    print $fh "\tinInventory\n";
+    print $fh "\tisSelfSkill\n";
+    print $fh "\tequip_topHead\n";
+    print $fh "\tequip_midHead\n";
+    print $fh "\tequip_lowHead\n";
+    print $fh "\tequip_leftHand\n";
+    print $fh "\tequip_rightHand\n";
+    print $fh "\tequip_leftAccessory\n";
+    print $fh "\tequip_rightAccessory\n";
+    print $fh "\tequip_robe\n";
+    print $fh "\tequip_armor\n";
+    print $fh "\tequip_shoes\n";
+    print $fh "\tequip_arrow\n";
+    print $fh "\tmanualAI 0\n";
+    print $fh "\tzeny\n";
+    print $fh "\tnotOnAction\n";
+    print $fh "}\n";
+    print $fh "\n"; #deixar uma linha em branco
+    close ($fh);
+}
+
+sub adicionaUseSelfSkill {
+    open (my $fh, '>>:encoding(UTF-8)', Settings::getConfigFilename());
+    print $fh "useSelf_skill {\n";
+    print $fh "\tlvl\n";
+    print $fh "\tmaxCastTime 0\n";
+    print $fh "\tminCastTime 0\n";
+    print $fh "\thp\n";
+    print $fh "\tsp\n";
+    print $fh "\thomunculus_hp\n";
+    print $fh "\thomunculus_sp\n";
+    print $fh "\thomunculus_dead\n";
+    print $fh "\tonAction\n";
+    print $fh "\twhenStatusActive\n";
+    print $fh "\twhenStatusInactive\n";
+    print $fh "\twhenFollowing\n";
+    print $fh "\tspirit\n";
+    print $fh "\tamuletType\n";
+    print $fh "\taggressives\n";
+    print $fh "\tmonsters\n";
+    print $fh "\tnotMonsters\n";
+    print $fh "\tmonstersCount\n";
+    print $fh "\tstopWhenHit\n";
+    print $fh "\tinLockOnly\n";
+    print $fh "\tnotWhileSitting\n";
+    print $fh "\tnotInTown 0\n";
+    print $fh "\ttimeout 0\n";
+    print $fh "\tdisabled 0\n";
+    print $fh "\tinInventory\n";
+    print $fh "\tmanualAI 0\n";
+    print $fh "\tnotOnAction\n";
+    print $fh "}\n";
+    print $fh "\n"; #deixar uma linha em branco
+    close ($fh);
+}
+
+sub adicionaUseSelfItem {
+    open (my $fh, '>>:encoding(UTF-8)', Settings::getConfigFilename());
+    print $fh "useSelf_item {\n";
+    print $fh "\thp\n";
+    print $fh "\tsp\n";
+    print $fh "\thomunculus_hp\n";
+    print $fh "\thomunculus_sp\n";
+    print $fh "\thomunculus_dead\n";
+    print $fh "\tonAction\n";
+    print $fh "\twhenStatusActive\n";
+    print $fh "\twhenStatusInactive\n";
+    print $fh "\twhenFollowing\n";
+    print $fh "\tspirit\n";
+    print $fh "\tamuletType\n";
+    print $fh "\taggressives\n";
+    print $fh "\tmonsters\n";
+    print $fh "\tnotMonsters\n";
+    print $fh "\tmonstersCount\n";
+    print $fh "\tstopWhenHit 0\n";
+    print $fh "\tinLockOnly 0\n";
+    print $fh "\tnotWhileSitting 0\n";
+    print $fh "\tnotInTown 0\n";
+    print $fh "\ttimeout\n";
+    print $fh "\tdisabled 0\n";
+    print $fh "\tinInventory\n";
+    print $fh "\tmanualAI 0\n";
+    print $fh "\tnotOnAction\n";
+    print $fh "}\n";
+    print $fh "\n"; #deixar uma linha em branco
+    close ($fh);
+}
+
+sub adicionaBuyAuto {
+    open (my $fh, '>>:encoding(UTF-8)', Settings::getConfigFilename());
+    print $fh "buyAuto {\n";
+    print $fh "\tnpc\n";
+    print $fh "\tstandpoint\n";
+    print $fh "\tdistance 5\n";
+    print $fh "\tprice\n";
+    print $fh "\tminAmount\n";
+    print $fh "\tmaxAmount\n";
+    print $fh "\tbatchSize\n";
+    print $fh "\tdisabled 0\n";
+    print $fh "\tzeny\n";
+    print $fh "}\n";
+    print $fh "\n"; #deixar uma linha em branco
+    close ($fh);
+}
+
+sub adicionaGetAuto {
+    open (my $fh, '>>:encoding(UTF-8)', Settings::getConfigFilename());
+    print $fh "getAuto {\n";
+    print $fh "\tminAmount\n";
+    print $fh "\tmaxAmount\n";
+    print $fh "\tpassive\n";
+    print $fh "}\n";
+    print $fh "\n"; #deixar uma linha em branco
+    close ($fh);
+}
+
+sub adicionaBetterShopper {
+    open (my $fh, '>>:encoding(UTF-8)', Settings::getConfigFilename());
+    print $fh "BetterShopper {\n";
+    print $fh "\tmaxPrice\n";
+    print $fh "\tmaxAmount\n";
+    print $fh "\tdisabled 0\n";
+    print $fh "}\n";
+    print $fh "\n"; #deixar uma linha em branco
+    close($fh);
+}
+
+sub adicionaEnhancedCasting {
+    open (my $fh, '>>:encoding(UTF-8)', Settings::getConfigFilename());
+    print $fh "enhancedCasting {\n";
+    print $fh "\tlvl\n";
+    print $fh "\tmaxCastTime 0\n";
+    print $fh "\tminCastTime 0\n";
+    print $fh "\thp\n";
+    print $fh "\tsp\n";
+    print $fh "\tonAction\n";
+    print $fh "\twhenStatusActive\n";
+    print $fh "\twhenStatusInactive\n";
+    print $fh "\twhenFollowing\n";
+    print $fh "\taggressives\n";
+    print $fh "\tmonsters\n";
+    print $fh "\tnotMonsters\n";
+    print $fh "\tmonstersCount\n";
+    print $fh "\tstopWhenHit\n";
+    print $fh "\tinLockOnly\n";
+    print $fh "\tnotWhileSitting\n";
+    print $fh "\tnotInTown 0\n";
+    print $fh "\ttimeout 0\n";
+    print $fh "\tdisabled 1\n";
+    print $fh "\tinInventory\n";
+    print $fh "\tnotOnAction\n";
+    print $fh "\tblockDelayBeforeUse\n";
+    print $fh "\tblockDelayAfterUse\n";
+    print $fh "\ttarget\n";
+    print $fh "\tnotTarget\n";
+    print $fh "\tElement\n";
+    print $fh "\tnotElement\n";
+    print $fh "\tRace\n";
+    print $fh "\tnotRace\n";
+    print $fh "\tSize\n";
+    print $fh "\tnotSize\n";
+    print $fh "\tnotImmovable\n";
+    print $fh "\tdist\n";
+    print $fh "\tdamageFormula\n";
+    print $fh "\tdamageType\n";
+    print $fh "\tfallThrough\n";
+    print $fh "}\n";
+    print $fh "\n"; #deixar uma linha em branco
+    close ($fh);
+}
+automacro UpClasse {
+    BaseLevel != 99
+    ConfigKeyNot quest_eden em_curso
+    ConfigKeyNot quest_eden terminando
+    ConfigKeyNot naSequenciaDeSalvamento true
+    ConfigKeyNot virarClasse2 true
+    ConfigKeyNot virarClasse2T true
+    ConfigKeyNot virarClasse3 true
+    ConfigKeyNot quest_skill true
+    ConfigKeyNot esperarFazerQuest true
+    ConfigKeyNot lockMap $mapa{lockMap}
+    ConfigKey aeroplano1 none
+    ConfigKey aeroplano2 none
+    ConfigKey questRenascer_estagio none
+    exclusive 1
+    priority 50 #baixa prioridade
+    timeout 30
+    JobIDNot 0 #Ou o campo de treinamento fica louco
+    JobIDNot 4023 #Baby Aprendiz
+    call upar
+}
+
+automacro UpClasse3rd {
+    BaseLevel >= 99
+    ConfigKeyNot naSequenciaDeSalvamento true
+    ConfigKeyNot esperarFazerQuest true
+    ConfigKeyNot lockMap $mapa{lockMap}
+    ConfigKey aeroplano1 none
+    ConfigKey aeroplano2 none
+    exclusive 1
+    priority 50 #baixa prioridade
+    timeout 30
+    JobID $parametrosClasses{idC3}, $parametrosClasses{idC3Alt}, $parametrosClasses{idBC3}, $parametrosClasses{idCB3Alt}
+    call upar
+}
+
+macro upar {
+    
+    if (&config(lockMap) = $mapa{lockMap}) {
+        [
+        log ================================
+        log =Tudo Configurado
+        log =Continuarei upando em $mapa{lockMap}
+        log ================================
+        ]
+        call voltarAtacar
+        do conf -f o_que_estou_fazendo upando
+        stop
+    }
+    
+    #se chegar ate aqui é porque tem algo a ser configurado
+    [
+    log ===================================
+    log = saveMap que está configurado agora: &config(saveMap)
+    log = saveMap que quero salvar: $mapa{saveMap}
+    log ===================================
+
+    log ===================================
+    log = lockMap que está configurado agora: &config(lockMap)
+    log = lockMap que quero salvar: $mapa{lockMap}
+    log ===================================
+    ]
+    
+    #se chegar aqui significa que tem que ser mudado o lockMap e/ou o saveMap
+    if (&config(saveMap) = $mapa{saveMap}) {
+        [
+        log =====================================
+        log =Já estou salvo em $mapa{saveMap}
+        log =Configurando lockMap
+        log =====================================
+        ]
+        do conf lockMap $mapa{lockMap}
+        call voltarAtacar
+        do conf -f o_que_estou_fazendo upando
+    } else {
+        log vou salvar em: $mapa{saveMap}
+        call pararDeAtacar
+        $macroParaChamar = salvarOndeVouUpar("&config(saveMap)", "$mapa{saveMap}")
+        call $macroParaChamar
+    }
+}
+
+sub salvarOndeVouUpar {
+    my $mapaOrigem = $_[0];
+    my $mapaDestino = $_[1];
+    warning "\$mapaOrigem: $mapaOrigem, \$mapaDestino: $mapaDestino\n";
+    my @rotas = (
+        { de => 'hugel',   para => 'rachel',    usar => 'aeroplano_hugelPara "rachel"'},
+        { de => 'hugel',   para => 'veins',     usar => 'aeroplano_hugelPara "rachel"'},
+        { de => 'hugel',   para => 'einbroch',  usar => 'aeroplano_hugelPara "einbroch"'},
+        { de => 'hugel',   para => 'yuno',      usar => 'aeroplano_hugelPara "juno"'},
+        { de => 'hugel',   para => '*',         usar => 'aeroplano_hugelPara "izlude"'},
+        { de => 'rachel',  para => 'hugel',     usar => 'aeroplano_rachelPara "rachel"'},
+        { de => 'rachel',  para => 'veins',     usar => 'salvarNaCidade "veins"'},
+        { de => 'rachel',  para => 'einbroch',  usar => 'aeroplano_rachelPara "einbroch"'},
+        { de => 'rachel',  para => 'yuno',      usar => 'aeroplano_rachelPara "juno"'},
+        { de => 'rachel',  para => '*',         usar => 'aeroplano_rachelPara "izlude"'},
+        { de => 'veins',   para => 'hugel',     usar => 'aeroplano_rachelPara "rachel"'},
+        { de => 'veins',   para => 'rachel',    usar => 'salvarNaCidade "rachel"'},
+        { de => 'veins',   para => 'einbroch',  usar => 'aeroplano_rachelPara "einbroch"'},
+        { de => 'veins',   para => 'yuno',      usar => 'aeroplano_rachelPara "juno"'},
+        { de => 'veins',   para => '*',         usar => 'aeroplano_rachelPara "izlude"'},
+        { de => '*',       para => 'hugel',     usar => 'aeroplano_junoPara "hugel"'},
+        { de => '*',       para => 'rachel',    usar => 'aeroplano_junoPara "rachel"'},
+        { de => '*',       para => 'veins',     usar => 'aeroplano_junoPara "rachel"'},
+        { de => '*',       para => 'einbroch',  usar => 'aeroplano_junoPara "einbroch"'},
+        { de => '*',       para => '*' }
+    );
+
+    foreach my $rota (@rotas) {
+        if ($mapaOrigem eq $rota->{de}) {
+            if ($mapaDestino eq $rota->{para}) {
+                $rotaDecidida = 1;
+                message "Será retornado o comando $rota->{usar}\n";
+                return $rota->{usar};
+            } else {
+                if ($rota->{para} eq "*") {
+                    $rotaDecidida = 1;
+                    message "Será retornado o comando $rota->{usar}\n";
+                    return $rota->{usar};
+                }
+            }
+        } else {
+            if ($rota->{de} eq "*") {
+                if ($mapaDestino eq $rota->{para}) {
+                    $rotaDecidida = 1;
+                    message "Será retornado o comando $rota->{usar}\n";
+                    return $rota->{usar};
+                } else {
+                    if ($rota->{para} eq "*") {
+                        $rotaDecidida = 1;
+                        message "Será retornado o comando savarNaCidade $mapaDestino\n";
+                        return "salvarNaCidade $mapaDestino";
+                    }
+                }
+            }
+        }
+    }
+    
+    if (!$rotaDecidida) {
+        error "tem um erro em decidir qual rota deve ser seguida\n";
+    }
+}
+
+#Digite no console do eventMacro
+#eventMacro aeroplano_junoPara --cidade
+#Pode ser tambem
+#eventMacro aeroplano_einbrochPara --cidade
+#ou
+#eventMacro aeroplano_junoPara --cidade
+#se o nome estiver certo, ele vai mover pra cidade desejada
+macro aeroplano_junoPara {
+    set exclusive 1
+    log Vamos ir de Juno para $.param[0]
+    #Se a cidade for izlude ou rachel , ele pega o aeroplano respectivo
+    switch ( $.param[0] ) {
+        case (=~ /izlude/i) {
+            do conf -f aeroplano1 izlude
+            do conf -f aeroplano2 none
+        }
+        case (=~ /rachel/i) {
+            do conf -f aeroplano1 rachel
+            do conf -f aeroplano2 none
+        }
+        case (=~ /hugel/i) {
+            do conf -f aeroplano1 none
+            do conf -f aeroplano2 hugel
+        }
+        case (=~ /lighthalzen/i) {
+            do conf -f aeroplano1 none
+            do conf -f aeroplano2 lighthalzen
+        }
+        case (=~ /einbroch/i) {
+            do conf -f aeroplano1 none
+            do conf -f aeroplano2 einbroch
+        }
+        case (=~ /[jy]uno/) {
+            log VOCÊ QUER IR DE JUNO PRA JUNO?
+            log PORQUE VOCÊ FARIA ISSO?
+            stop
+        }
+        else {
+            [
+            log Você digitou um nome inválido, por favor tente novamente
+            log Os valores podem ser:
+            log izlude , rachel , juno ou yuno
+            log hugel , lighthalzen ou einbroch
+            log Escreva como quiser, desde que escreva certo
+            ]
+            stop
+        }
+    }
+    $varAeroplano1 = &config(aeroplano1)
+    $varAeroplano2 = &config(aeroplano2)
+    do conf -f aeroplano_macroChamada aeroplano_junoPara "$.param[0]"
+    do conf lockMap none
+    do ai manual
+    if ($.map ~ airplane, airplane_01) {
+        log ja estamos no aeroplano, só esperar agora
+    } else {
+        if ( $.map != yuno ) do move yuno
+    }
+    log $varAeroplano1, $varAeroplano2
+}
+
+macro aeroplano_einbrochPara {
+    set exclusive 1
+    log Vamos ir de Eibroch para $.param[0]
+    #se a cidade for juno hugel ou lighthalzen ele só pega 1 aeroplano
+    # se for outra cidade, ele pega os dois aeroplanos
+    switch ($.param[0]) {
+        case (=~ /izlude/i) {
+            do conf -f aeroplano1 izlude
+            do conf -f aeroplano2 juno
+        }
+        case (=~ /rachel/i) {
+            do conf -f aeroplano1 rachel
+            do conf -f aeroplano2 juno
+        }
+        case (=~ /hugel/i) {
+            do conf -f aeroplano1 none
+            do conf -f aeroplano2 hugel
+        }
+        case (=~ /lighthalzen/i) {
+            do conf -f aeroplano1 none
+            do conf -f aeroplano2 lighthalzen
+        }
+        case (=~ /einbroch/i) {
+            log VOCÊ QUER IR DE EINBROCH PRA EINBROCH?
+            log PORQUE VOCÊ FARIA ISSO?
+            stop
+        }
+        case (=~ /[jy]uno/) {
+            do conf -f aeroplano1 none
+            do conf -f aeroplano2 juno
+        }
+        else {
+            [
+            log Você digitou um nome inválido, por favor tente novamente
+            log Os valores podem ser izlude , rachel , juno ou yuno ,
+            log hugel , lighthalzen ou einbroch
+            log pode ser com letra maiuscula ou sem
+            ]
+            stop
+        }
+    }
+    $varAeroplano1 = &config(aeroplano1)
+    $varAeroplano2 = &config(aeroplano2)
+    do conf -f aeroplano_macroChamada aeroplano_einbrochPara "$.param[0]"
+    do conf lockMap none
+    do ai manual
+    if ($.map ~ airplane, airplane_01) {
+        log ja estamos no aeroplano, só esperar agora
+    } else {
+        do move airplane
+    }
+    log $varAeroplano1, $varAeroplano2
+}
+
+macro aeroplano_rachelPara {
+    set exclusive 1
+    log Vamos ir de Rachel para $.param[0]
+    #se a cidade for izlude ou juno ele só pega 1 aeroplano
+    # se for outra cidade, ele pega os dois aeroplanos
+
+    switch ($.param[0]) {
+        case (=~ /izlude/i) {
+            do conf -f aeroplano1 izlude
+            do conf -f aeroplano2 none
+        }
+        case (=~ /rachel/i) {
+            log VOCÊ QUER IR DE RACHEL PRA RACHEL?
+            log PORQUE VOCÊ FARIA ISSO?
+            stop
+        }
+        case (=~ /hugel/i) {
+            do conf -f aeroplano1 juno
+            do conf -f aeroplano2 hugel
+        }
+        case (=~ /lighthalzen/i) {
+            do conf -f aeroplano1 juno
+            do conf -f aeroplano2 lighthalzen
+        }
+        case (=~ /einbroch/i) {
+            do conf -f aeroplano1 juno
+            do conf -f aeroplano2 einbroch
+        }
+        case (=~ /[jy]uno/) {
+            do conf -f aeroplano1 juno
+            do conf -f aeroplano2 none
+        }
+        else {
+            [
+            log Você digitou um nome inválido, por favor tente novamente
+            log Os valores podem ser izlude , rachel , juno ou yuno ,
+            log hugel , lighthalzen ou einbroch
+            log pode ser com letra maiuscula ou sem
+            ]
+            stop
+        }
+    }
+    $varAeroplano1 = &config(aeroplano1)
+    $varAeroplano2 = &config(aeroplano2)
+    do conf -f aeroplano_macroChamada aeroplano_rachelPara "$.param[0]"
+    do conf lockMap none
+    do ai manual
+    if ( $.map ~ airplane, airplane_01) {
+        log ja estamos no aeroplano, só esperar agora
+    } else {
+        do move ra_fild12 294 208
+        do talk resp 0
+        log $varAeroplano1, $varAeroplano2
+    }
+}
+
+macro aeroplano_izludePara {
+    set exclusive 1
+    log Vamos ir de izlude para $.param[0]
+    #se a cidade for izlude ou juno ele só pega 1 aeroplano
+    # se for outra cidade, ele pega os dois aeroplanos
+
+    switch ($.param[0]) {
+        case (=~ /izlude/i) {
+            log VOCÊ QUER IR DE IZLUDE PRA IZLUDE?
+            log PORQUE VOCÊ FARIA ISSO?
+            stop
+        }
+        case (=~ /rachel/i) {
+            do conf -f aeroplano1 rachel
+            do conf -f aeroplano2 none
+        }
+        case (=~ /hugel/i) {
+            do conf -f aeroplano1 juno
+            do conf -f aeroplano2 hugel
+        }
+        case (=~ /lighthalzen/i) {
+            do conf -f aeroplano1 juno
+            do conf -f aeroplano2 lighthalzen
+        }
+        case (=~ /einbroch/i) {
+            do conf -f aeroplano1 juno
+            do conf -f aeroplano2 einbroch
+        }
+        case (=~ /[jy]uno/) {
+            do conf -f aeroplano1 juno
+            do conf -f aeroplano2 none
+        }
+        else {
+            [
+            log Você digitou um nome inválido, por favor tente novamente
+            log Os valores podem ser izlude , rachel , juno ou yuno ,
+            log hugel , lighthalzen ou einbroch
+            log pode ser com letra maiuscula ou sem
+            ]
+            stop
+        }
+    }
+    $varAeroplano1 = &config(aeroplano1)
+    $varAeroplano2 = &config(aeroplano2)
+    do conf -f aeroplano_macroChamada aeroplano_izludePara "$.param[0]"
+    do conf lockMap none
+    do ai manual
+    if ( $.map ~ airplane, airplane_01) {
+        log ja estamos no aeroplano, só esperar agora
+    } else {
+        do move izlude 206 55
+        do talknpc 206 55
+        log $varAeroplano1, $varAeroplano2
+    }
+}
+
+macro aeroplano_hugelPara {
+    set exclusive 1
+    log Vamos ir de Hugel para $.param[0]
+    #se a cidade for izlude ou juno ele só pega 1 aeroplano
+    # se for outra cidade, ele pega os dois aeroplanos
+
+    switch ($.param[0]) {
+        case (=~ /izlude/i) {
+            do conf -f aeroplano1 izlude
+            do conf -f aeroplano2 juno
+        }
+        case (=~ /rachel/i) {
+            do conf -f aeroplano1 juno
+            do conf -f aeroplano2 hugel
+        }
+        case (=~ /hugel/i) {
+            log VOCÊ QUER IR DE HUGEL PRA HUGEL?
+            log PORQUE VOCÊ FARIA ISSO?
+            stop
+        }
+        case (=~ /lighthalzen/i) {
+            do conf -f aeroplano1 none
+            do conf -f aeroplano2 lighthalzen
+        }
+        case (=~ /einbroch/i) {
+            do conf -f aeroplano1 none
+            do conf -f aeroplano2 einbroch
+        }
+        case (=~ /[jy]uno/) {
+            do conf -f aeroplano1 none
+            do conf -f aeroplano2 juno
+        }
+        else {
+            [
+            log Você digitou um nome inválido, por favor tente novamente
+            log Os valores podem ser izlude , rachel , juno ou yuno ,
+            log lighthalzen ou einbroch
+            log pode ser com letra maiuscula ou sem
+            ]
+            stop
+        }
+    }
+    $varAeroplano1 = &config(aeroplano1)
+    $varAeroplano2 = &config(aeroplano2)
+    do conf -f aeroplano_macroChamada aeroplano_hugelPara "$.param[0]"
+    do conf lockMap none
+    do ai manual
+    if ( $.map ~ airplane, airplane_01) {
+        log ja estamos no aeroplano, só esperar agora
+    } else {
+        do move hugel 178 142
+        do talk resp 0
+        log $varAeroplano1, $varAeroplano2
+    }
+}
+
+macro aeroplano_lighthalzenPara {
+    set exclusive 1
+    log Vamos ir de Eibroch para $.param[0]
+    #se a cidade for juno hugel ou lighthalzen ele só pega 1 aeroplano
+    # se for outra cidade, ele pega os dois aeroplanos
+    switch ($.param[0]) {
+        case (=~ /izlude/i) {
+            do conf -f aeroplano1 izlude
+            do conf -f aeroplano2 juno
+        }
+        case (=~ /rachel/i) {
+            do conf -f aeroplano1 rachel
+            do conf -f aeroplano2 juno
+        }
+        case (=~ /hugel/i) {
+            do conf -f aeroplano1 none
+            do conf -f aeroplano2 hugel
+        }
+        case (=~ /lighthalzen/i) {
+            log VOCÊ QUER IR DE EINBROCH PRA EINBROCH?
+            log PORQUE VOCÊ FARIA ISSO?
+            stop
+        }
+        case (=~ /einbroch/i) {
+            do conf -f aeroplano1 none
+            do conf -f aeroplano2 einbroch
+        }
+        case (=~ /[jy]uno/) {
+            do conf -f aeroplano1 none
+            do conf -f aeroplano2 juno
+        }
+        else {
+            [
+            log Você digitou um nome inválido, por favor tente novamente
+            log Os valores podem ser izlude , rachel , juno ou yuno ,
+            log hugel , lighthalzen ou einbroch
+            log pode ser com letra maiuscula ou sem
+            ]
+            stop
+        }
+    }
+    $varAeroplano1 = &config(aeroplano1)
+    $varAeroplano2 = &config(aeroplano2)
+    do conf -f aeroplano_macroChamada aeroplano_lighthalzenPara "$.param[0]"
+    do conf lockMap none
+    do ai manual
+    if ($.map ~ airplane, airplane_01) {
+        log ja estamos no aeroplano, só esperar agora
+    } else {
+        do move airplane
+    }
+    log $varAeroplano1, $varAeroplano2
+}
+
+automacro dentroDoAeroplanoBugged {
+    InMap airplane, airplane_01
+    exclusive 1
+    CheckOnAI manual
+    ConfigKeyNot lockMap none
+    call {
+        do conf lockMap none
+    }
+}
+
+automacro usarAeroplanoBugged {
+    CheckOnAI auto
+    exclusive 1
+    ConfigKeyNot aeroplano1 none, aeroplano2 none
+    call {
+        #se essa macro se ativar, significa que a AI ta no automático
+        #quando deveria estar no manual pra todas as outras macros se ativarem
+        #aconteceria se no meio do uso da macro (mover ate la ou dentro do aeroplano)
+        #o openkore fosse fechado
+        do ai manual
+        $macro = &config(aeroplano_macroChamada)
+        [
+        log ===================================
+        log = chamando a macro $macro
+        log ===================================
+        ]
+        call $macro
+    }
+}
+
+automacro dentroDoAeroplanoInternacional_checagem {
+    ConfigKeyNot aeroplano1 none
+    InMap airplane_01
+    CheckOnAI manual
+    timeout 50
+    call {
+        if (! &defined($varAeroplano1) ) {
+            $varAeroplano1 = &config(aeroplano1)
+        }
+        [
+        log ===================================
+        log Estamos no aeroplano, aguardando chegada ao destino
+        log ===================================
+        ]
+    }
+}
+
+automacro dentroDoAeroplanoInternacional {
+    InMap airplane_01
+    CheckOnAI manual
+    LocalMsg /Bem-vindo a $varAeroplano1|Welcome to $varAeroplano1/i
+    exclusive 1
+    call sairDoAeroplano
+}
+
+automacro dentroDoAeroplanoDomestico_checagem {
+    ConfigKeyNot aeroplano2 none
+    InMap airplane
+    CheckOnAI manual
+    timeout 50
+    call {
+        if (&defined($varAeroplano2) = 0) {
+            $varAeroplano2 = &config(aeroplano2)
+        }
+        [
+        log ===================================
+        log Estou no aeroplano, aguardando chegada ao destino
+        log ===================================
+        ]
+    }
+}
+
+automacro dentroDoAeroplanoDomestico {
+    InMap airplane
+    CheckOnAI manual
+    LocalMsg /Bem-vindos a $varAeroplano2|Welcome to $varAeroplano2/i
+    exclusive 1
+    call sairDoAeroplano
+}
+
+macro sairDoAeroplano {
+    
+    # é preciso ser feito isso para que a Condição InMap funcione
+    # já que o nome original da cidade é yuno
+    # mas não pode ser mudado antes, porque dentro do aeroplano
+    # o valor precisa ser juno
+    if ( $varAeroplano1 = juno ) $varAeroplano1 = yuno
+    if ( $varAeroplano2 = juno ) $varAeroplano2 = yuno
+
+    do move 243 74
+}
+
+#Se estivermos na cidade, e o local desejado for essa cidade, ele completa o objetivo
+#se estivermos na cidade, mas nao for o objetivo, nada acontece, já que provavelmente
+#ele só está se locomovendo pra fazer qualquer outra coisa aleatoria que nao tem nada
+# a ver com esse macro
+automacro chegueiEmCidade2 {
+    InMap $varAeroplano2
+    NotInMap yuno
+    CheckOnAI manual
+    ConfigKey aeroplano2 $varAeroplano2
+    exclusive 1
+    call objetivoCompleto
+}
+
+automacro chegueiEmCidade1 {
+    InMap $varAeroplano1
+    NotInMap yuno
+    CheckOnAI manual
+    ConfigKey aeroplano1 $varAeroplano1
+    exclusive 1
+    call objetivoCompleto
+}
+
+automacro chegueiPertoDeRachel {
+    InMap ra_fild12
+    ConfigKey aeroplano1 rachel
+    exclusive 1
+    CheckOnAI manual
+    call {
+        log agora to bem perto de rachel
+        log indo pra la
+        do move rachel
+    }
+}
+macro objetivoCompleto {
+    #Se estivermos na cidade, e o local desejado for essa cidade, ele completa o objetivo
+    #E automaticamente salva na cidade, usando a macro salvarNaCidade
+    log cheguei em $.InMapLast , objetivo completo
+    do conf aeroplano2 none
+    do conf aeroplano1 none
+    do conf aeroplano_macroChamada none
+    do ai on
+    do conf -f o_que_estou_fazendo acabeiDeChegarNaCidadeViaAeroplano
+    call salvarNaCidade "$.InMapLast"
+}
+
+automacro chegueiEmJuno {
+    InMap yuno
+    CheckOnAI manual
+    priority 10 #prioridade alta
+    ConfigKeyNot aeroplano1 none, aeroplano2 none
+    exclusive 1
+    call {
+        # é aqui que ocorre a mágica, quando chega em juno
+        # ele detecta se precisa pegar outro aeroplano ou não
+        # se ele precisar ele vai
+        # se não precisar ele vai pra proximo da kafra e completa o objetivo
+        log destino para aeroplano1 é: &config(aeroplano1)
+        log destino para aeroplano2 é: &config(aeroplano2)
+        
+        if (&config(aeroplano1) =~ /rachel|izlude/i ) {
+            do move airplane_01
+        } elsif ( &config(aeroplano2) =~ /hugel|einbroch|lighthalzen/i ) {
+            do move airplane
+        } elsif ( &config(aeroplano1) =~  /[yj]uno/i || &config(aeroplano2) =~ /[yj]uno/i ) {
+            do move &rand(150, 154) &rand(182, 186)
+            call objetivoCompleto
+        } else {
+            log Falha em descobrir a rota correta, revise o código
+        }
+    }
+}
+#
+#
+#
+# FIM DA MACRO DE SALVAR NO AEROPLANO
+#
+
+automacro utilidades_configEstaErrada {
+    exclusive 1
+    overrideAI 1
+    priority 25
+    ConfigKeyNot autoTalkCont 1
+    call {
+        log Tem uma config que está errada
+        log A config é $.ConfigKeyNotLastKey
+        log O valor que quero é $.ConfigKeyNotLastWantedValue
+        log Mas o valor atual é $.ConfigKeyNotLastKeyValue
+        log Mudando valor da config $.ConfigKeyNotLastKey de $.ConfigKeyNotLastKeyValue para $.ConfigKeyNotLastWantedValue
+        do conf $.ConfigKeyNotLastKey $.ConfigKeyNotLastWantedValue
+    }
+}
+
+automacro checkSeEstaNaQuestEden {
+    exclusive 1
+    QuestInactive 7128
+    QuestInactive 7129
+    QuestInactive 7130
+    QuestInactive 7131
+    QuestInactive 7138
+    QuestInactive 7139
+    QuestInactive 7140
+    QuestInactive 7132
+    QuestInactive 7141
+    QuestInactive 7147
+    QuestInactive 7148
+    QuestInactive 7149
+    QuestInactive 7150
+    QuestInactive 7151
+    QuestInactive 7214
+    QuestInactive 7215
+    QuestInactive 7216
+    QuestInactive 7217
+    QuestInactive 7218
+    ConfigKey quest_eden em_curso
+    call {
+        [
+        warning ===================================
+        warning = estranho, não tenho nenhuma quest eden
+        warning = ativa, mas a eventMacro acha que tem
+        warning = consertando isso
+        warning ===================================
+        ]
+        do conf quest_eden none
+    }
+}
+
+macro pararDeAtacar {
+    [
+    do conf route_randomWalk 0
+    do conf attackAuto 1
+    ]
+}
+
+automacro reloadPortals {
+    exclusive 1
+    timeout 300
+    BaseLevel != 99
+    ConfigKeyNot quest_eden em_curso
+    ConfigKeyNot quest_eden terminando
+    ConfigKeyNot naSequenciaDeSalvamento true
+    ConfigKeyNot virarClasse2 true
+    ConfigKeyNot virarClasse2T true
+    ConfigKeyNot virarClasse3 true
+    ConfigKeyNot quest_skill true
+    ConfigKeyNot esperarFazerQuest true
+    ConfigKeyNot lockMap $mapa{lockMap}
+    ConfigKey aeroplano1 none
+    ConfigKey aeroplano2 none
+    ConfigKey questRenascer_estagio none
+    JobIDNot 0 #Aprendiz
+    JobIDNot 4023 #Baby Aprendiz
+    call {
+        do reload portals
+    }
+}
+
+macro pararDeAtacarApenasCorrer {
+    [
+    do conf route_randomWalk 0
+    do conf attackAuto -1
+    ]
+}
+
+macro voltarAtacar {
+    [
+    do conf route_randomWalk 1
+    do conf attackAuto 2
+    ]
+}
+
+#coloque esse if dentro da macro que tiver checando o item
+#substitua item pelo item que quer, e o número 5 pela quantidade que precisa
+#   if (&storamount(ITEM) > 0 && &invamount(ITEM) < 5) {
+#       log tenho que ir no armazem pegar
+#       call pegarItemDoArmazenSeTiver "NOME" "5"
+#   }
+
+macro checarSeArmazenJaFoiAberto {
+
+    $armazemJaFoiAberto = armazemJaFoiAberto()
+    if ($armazemJaFoiAberto = nao) {
+        log armazém ainda não foi inicializado, indo lá!
+        do autostorage
+    } else {
+        log armazém já foi aberto uma vez nessa sessão, então tá de boas
+    }
+}
+
+macro pegarItemDoArmazenSeTiver {
+    $item = $.param[0]
+    $quantidade = $.param[1]
+    
+    #Verificar se armazenamento já foi aberto antes de começar
+    call checarSeArmazenJaFoiAberto
+
+    #checando duas vezes se tem o item mesmo no storage
+    if (&storamount($item) > 0) {
+        call irNaKafraEAbrirStorage
+        if (!$.storageopen) stop
+        do storage get &storage($item) $quantidade
+        do storage close
+        
+    } else {
+        [
+        log ===================================
+        log = Não tenho pegarNomePeloIdDoItem($item) no armazen
+        log ===================================
+        ]
+    }
+}
+
+macro pegarDoStorageEVender {
+    set exclusive 1
+    $continuarLoop = 1
+    while ($continuarLoop) {
+        do ai manual
+        @listaDeItems = criarListaDeItens("sell") #cria a array listaDeItems
+        if (&config(itemsCheckWeight) != 1) do conf -f itemsCheckWeight 1
+        call irNaKafraEAbrirStorage
+        if (!$.storageopen) stop
+        pause 2
+        $temItem = 0
+        if ($listaDeItems[0] = erro) stop
+
+        $index = 0
+        set macro_delay 0.3
+        while ($index < @listaDeItems && $.weightpercent < 85) {
+            $temItem = 1
+            $qtdDoItemAtual = &storamount($listaDeItems[$index])
+            do storage get &storage($listaDeItems[$index]) if ( $qtdDoItemAtual > 0)
+            $index++
+        }
+        do storage close
+        pause 1
+        set macro_delay 1
+        do ai on
+        do autosell
+        if (! $temItem) {
+            [
+            log ===================================
+            log = Acredito que vendi todos os itens
+            log = que estavam no storage mas estavam marcados
+            log = pra ser vendido no npc
+            log ===================================
+            ]
+            $continuarLoop = 0
+        }
+    }
+    log FIM
+}
+
+# essa macro serve para tentar abrir o storage
+# na kafra que está salva na config storageAuto_npc
+# em caso de erro, vai tentar abrir mais duas vezes
+# na terceira vez mostra um erro e para oq tava fazendo
+macro irNaKafraEAbrirStorage {
+    $tentativa = 0
+    while ($continuarLoop || $tentativa >= 3) {
+        
+        $localKafra = &config(storageAuto_npc)
+        do move $localKafra &rand(4,7)
+        
+        if (&config(master) =~ /Valhalla/ ) {
+            do talknpc &arg("$localKafra", 2) &arg("$localKafra", 3) r1 r0
+        } else  {
+            do talknpc &arg("$localKafra", 2) &arg("$localKafra", 3) r1
+        }
+        
+        if (!$.storageopen) {
+            $tentativa++
+            
+            if ($tentativa >= 3) {
+                [
+                error ===================================
+                error = acabei de executar os comandos para
+                error = abrir o storage, porém o mesmo não está aberto
+                error = vou parar tudo que estou fazendo
+                error ===================================
+                ]
+                stop
+            } else {
+                [
+                warning ===================================
+                warning = tentativa $tentativa de 3 de abrir o storage
+                warning = tentando denovo
+                warning ===================================
+                ]
+            }
+        } else {
+            #objetivo cumprido: abrir storage
+            #podemos parar o loop
+            $continuarLoop = 0
+        }
+    }
+}
+
+sub criarListaDeItens {
+    my ($option) = @_;
+    my @lista;
+    #warning "option is $option\n";
+    foreach $key ( keys %items_control ) {
+        if ($items_control{$key}{$option}) {
+            #warning "da pra vender $key\n";
+            push @lista, $key;
+        }
+    }
+
+    if (@lista) {
+        return \@lista;
+    } else {
+        warning "não foi encontrado items para vender no items_control.txt";
+        return "erro";
+    }
+}
+
+sub armazemJaFoiAberto {
+    return $char->storage->wasOpenedThisSession() ? "sim" : "nao";
+}
+
+automacro desativarStorageAuto_lvlAbaixodeSeis {
+    SkillLevel NV_BASIC < 6
+    exclusive 1
+    JobID 4001 #aprendiz trans
+    ConfigKeyNot storageAuto 0
+    call {
+        log =============================
+        log = desativando storageAuto, porque
+        log = nem posso usar ainda, lvl baixo demais
+        log =============================
+        do conf storageAuto 0
+    }
+}
+
+automacro reativarStorageAuto_maiorQuelvlSeis {
+    exclusive 1
+    SkillLevel NV_BASIC >= 6
+    ConfigKeyNot storageAuto 1
+    JobID 4001 #aprendiz trans
+    call {
+        log ================================
+        log = reativando storageAuto, já posso usar
+        log ================================
+        do conf storageAuto 1
+    }
+}
+
+sub pegarID {
+    return $char->{jobID};
+}
+
+sub checarSeExisteNoConfig {
+    my ($key) = @_;
+    if (exists $config{$key}) {
+        return "sim";
+    } else {
+        return "nao";
+    }
+}
+
+sub pegarConfigItemsControl {
+    my ($item, $info) = @_;
+    if ($items_control{$item}{$info}) {
+        return $items_control{$item}{$info};
+    } else {
+        return -1;
+    }
+}
+
+macro equiparSePossivel {
+    $slot = $.param[0]
+    $idDoEquip = $.param[1]
+    $indice = pegarIndiceDoEquipamentoPeloId($slot, $idDoEquip)
+    if ($indice != -1) do eq $indice
+}
+
+sub pegarIndiceDoEquipamentoPeloId {
+    my ($slotDoEquipamento, $id) = @_;
+    message "Tentanto equipar '$items_lut{$id}' ($id)... ";
+
+    #associar o item no inventário a uma variável
+    my $item = $char->inventory->getByNameID($id);
+
+    #checar se o item não existe no inventário
+    if ($item eq "" ) {
+        #checando se a id passada é uma id válida
+        if ( exists $items_lut{$id} ) {
+            warning "Voce nao possui esse equipamento\n";
+        } else {
+            error "A ID do item esta incorreta\n";
+            error "ID apresentada: '$id'\n";
+            error "Entre em contato com os desenvolvedores da eventMacro\n"
+        }
+        return -1;
+    }
+    #atribuindo o indice do item a uma variavel
+    my $indiceDoEquip = $item->{binID};
+
+    #checa se tem algo equipado no slot
+    if (exists $char->{equipment}{$slotDoEquipamento}) {
+        my $equipamento = $char->{equipment}{$slotDoEquipamento};
+
+        #checa se o que está equipado é igual ao que estamos tentando equipar
+        #o único problema desse código é que se vc tiver uma arma normal, e outra com carta
+        #ele vai achar que são iguais e não vai equipar
+        #mas não vai afetar essa eventMacro porque por enquanto só ta sendo usada em equips eden
+        if ($equipamento->{nameID} == $id) {
+            warning "Isso já está equipado.\n";
+            return -1;
+        
+        #se o que tiver equipado for diferente do equip, então vamos equipar o que queremos
+        } else {
+            return $indiceDoEquip;
+        }
+
+    #Se não tiver nada equipado, significa que pode equipar
+    } else {
+        return $indiceDoEquip;
+    }
+}
+
+#sub checarSlot(String $slotDoEquipamento)
+#
+#   checa se no slot especificado já tem algum item equipado ou não
+#
+#se tiver algo equipado, retorna "tem equip"
+#senão, retorna "ta vazio"
+sub checarSlot {
+    my ($slotDoEquipamento) = @_;
+    if (exists $char->{equipment}{$slotDoEquipamento}) {
+        return "tem equip";
+    } else {
+        return "ta vazio";
+    }
+}
+
+#sub checarSeEquipEstaEquipado(String $slotDoEquipamento, int $id)
+#
+#   checa se o item da id especificada está equipado no slot especificado
+#
+#se o item não existir no seu inventário, retorna "não existe"
+#se o item existir e ele já estiver equipado, retorna "sim"
+#se o item existir, mas não estiver equipado, ou não tiver nenhum equip no slot especificado, retorna "não equipado"
+sub checarSeEquipEstaEquipado {
+    my ($slotDoEquipamento, $id) = @_;
+    my $item = $char->inventory->getByNameID($id);
+
+    #se o item não existir no seu inventário, retorna "não existe"
+    if ($item eq "" ) {
+        warning "Erro: você não possui esse equipamento.\n";
+        return "não existe";
+    }
+    my $indiceDoEquip = $item->{binID};
+    if (exists $char->{equipment}{$slotDoEquipamento}) {
+        my $equipamento = $char->{equipment}{$slotDoEquipamento};
+
+        #se o item existir e ele já estiver equipado, retorna "sim"
+        if ($equipamento->{nameID} == $id) {
+            return "sim";
+        
+        #se o item existir, mas não estiver equipado, retorna "não equipado"
+        } else {
+            return "não equipado";
+        }
+
+    #se o item existir, mas não tiver nenhum equip no slot especificado, retorna "não equipado"
+    } else {
+        return "não equipado";
+    }
+}
+
+#sub pegarNomeDoItemEquipado(String $slotDoEquipamento)
+#
+#   serve simplesmente para pegar o nome do equipamento equipado no slot especificado
+#
+#se tiver algo equipado no slot especificado, retorna o nome do item
+#senão, retorna 0 (talvez fosse melhor retornar undef? sei lá)
+sub pegarNomeDoItemEquipado {
+    my ($slotDoEquipamento) = @_;
+    use strict;
+    if (exists $char->{equipment}{$slotDoEquipamento}) {
+        return $char->{equipment}{$slotDoEquipamento}{name};
+    } else {
+        return 0;
+    }
+}
+
+#sub pegarNomePeloIdDoItem
+#
+#   consegue o nome do item com a id especificada
+#Se a ID existir no items.txt, retorna o nome do item
+#Senão, retorna a ID de volta pra pelo menos ter algo pra mostrar
+sub pegarNomePeloIdDoItem {
+    my ($id) = @_;
+    if (exists $items_lut{$id}) {
+        return $items_lut{$id};
+    } else {
+        return $id;
+    }
+}
+
+#sub proximoMapa 
+#
+#   usado para descobrir qual é o próximo mapa a se teleportar no campo de aprendiz
+#   existe 5 cópias do campo de aprendiz, e cada um tem seu próprio código
+#   exemplo, existe o new_1-1, e o new_2-1, que são mapas exatamente iguais
+#   essa é a forma mais fácil de ir para o próximo mapa
+#   se o mapa for new_5-1, aí vai para o mapa new_5-2
+#   poise, é meio confuso mesmo, demorei pra entender
+#
+#se o mapa especificado bater com a regex, então retorna o novo mapa correto pra se teleportar
+#senão, retorna 0
+#note que a única forma de retornar 0 é por inadimplência do programador, então tomem cuidado
+sub proximoMapa {
+    my $map = $_[0];
+    if ($map =~ /^new_(\d)-(\d)$/) {
+    return "new_".$1."-".($2+1);
+    } else {
+        return 0;
+    }
+}
+
+macro termineiQuestEdenManualmente {
+    do conf quest_eden none
+}
+
+macro termineiQuestSkillManualmente {
+    do conf quest_skill none
+}
+
+macro termineiQuestClasse2Manualmente {
+    do conf virarClasse2 none
+}
+
+macro termineiQuestClasse2TManualmente {
+    do conf virarClasse2T none
+}
+
+macro rebornarAgora {
+    log ==========================
+    log =Preparar para renascer
+    log =Checando algumas coisas
+    
+    if ($.weight < 1) {
+        log = peso zero, correto
+    } else {
+        [
+        error ===================================
+        error = ainda não está com zero de peso
+        error = impossível começar a rebornar
+        error = peso: $.weight
+        error = parando macro
+        error ===================================
+        ]
+        stop
+    }
+    
+    if ($.map =~ /yuno/) {
+        log = mapa $.map, correto
+    } else {
+        [
+        error ===================================
+        error = tenho que estar em um dos seguintes mapas:
+        error = yuno
+        error = yuno_in01
+        error = yuno_in02
+        error = yuno_in05
+        error = mas estou em $.map...
+        error = impossível começar a rebornar
+        error = parando macro
+        error ===================================
+        ]
+        stop
+    }
+    
+    if ($.lvl = 99) {
+        log = lvl de base 99, correto
+    } else {
+        [
+        error ===================================
+        error = ainda nao estou no lvl 99 de base
+        error = impossível começar a rebornar
+        error = lvl de base que estou: $.lvl
+        error = parando macro
+        error ===================================
+        ]
+        stop
+    }
+    
+    if ($.joblvl = 50) {
+        log = lvl de classe 50, correto
+    } else {
+        [
+        error ===================================
+        error = ainda não estou no lvl 50 de classe
+        error = impossível começar a rebornar
+        error = lvl de classe que estou: $.joblvl
+        error = parando a macro
+        error ===================================
+        ]
+        stop
+    }
+    
+    if ($.zeny = 1285000) {
+        log = tenho o zeny exato necessário pra rebornar
+    } elsif (($.zeny = 0 && $.map ~ yuno_in_02, yuno_in_05 ) || ($.zeny = 0 && &questStatus(1000))) {
+        log = já paguei a taxa pro livro
+    } else {
+        [
+        error ===================================
+        error = não estou com a quantidade certa de zenys
+        error = impossivel rebornar desse jeito
+        error = quanto que tenho: $.zeny zenys
+        error ===================================
+        ]
+        stop
+    }
+    log = Tudo certo :-D
+    log ==========================
+        
+    #se chegou até aqui é porque está tudo certinho
+    do conf -f questRenascer_estagio 1
+}
+
+automacro mostrarAjuda {
+    ConfigKeyNot quest_eden em_curso
+    ConfigKeyNot quest_eden terminando
+    ConfigKeyNot naSequenciaDeSalvamento true
+    ConfigKeyNot virarClasse2 true
+    ConfigKeyNot virarClasse2T true
+    ConfigKeyNot virarClasse3 true
+    ConfigKeyNot quest_skill true
+    ConfigKeyNot esperarFazerQuest true
+    ConfigKey aeroplano1 none
+    ConfigKey aeroplano2 none
+    ConfigKey questRenascer_estagio none
+    timeout 600 #10 minutos
+    BaseLevel > 0
+    exclusive 1
+    priority 999999 #menor prioridade
+    call ajuda
+}
+
+macro ajuda {
+    [
+    log ==========================
+    log Menu de ajuda da Macro
+    log ==========================
+    log Comandos em caso de bug em alguma quest:
+    log     eventMacro termineiQuestEdenManualmente
+    log     eventMacro termineiQuestSkillManualmente
+    log     eventMacro termineiQuestClasse2Manualmente
+    log     eventMacro termineiQuestClasse2TManualmente
+    log Comando para controlar o modo de ataque do bot
+    log     eventMacro pararDeAtacar
+    log     eventMacro pararDeAtacarApenasCorrer
+    log     eventMacro voltarAtacar
+    log Comandos para utilizar o Aeroplano
+    log     eventMacro aeroplano_junoPara izlude OU rachel OU hugel OU lighthalzen OU einbroch
+    log     eventMacro aeroplano_einbrochPara izlude OU rachel OU hugel OU lighthalzen OU juno
+    log     eventMacro aeroplano_junoPara izlude OU hugel OU lighthalzen OU juno OU einbroch
+    log Comando para pegar do storage itens que deveria vender no npc, e vender
+    log     eventMacro pegarDoStorageEVender
+    log     Obs: Lembrando que ele só vende items que estiver marcado pra vender no items_control
+    log Comando para debug
+    log     eventMacro status
+    log     eventMacro informacoes
+    ]
+}
+
+macro informacoes {
+    $jobID = pegarID()
+    [
+        warning ===========================================
+        warning Informações uteis para reportar um problema
+        warning -------------------------------------------
+        warning versão: &config(versao_eventmacro_up_todas_as_classes_bro)
+        warning Level: $.lvl/$.joblvl
+        warning JobID: $jobID
+        warning O que estava fazendo: &config(o_que_estou_fazendo)
+        warning Mapa: $.map $.pos
+        warning Ultima automacro: $.caller
+        warning ==========================================
+    ]
+}
+
+sub desequipar {
+    my $tipo = shift;
+    if (exists $char->{equipment}{$tipo}) {
+        $char->{equipment}{$tipo}->unequip();
+    } else {
+        message "Não tem nada equipado em $type\n";
+    }
+}
+
+automacro configurarPocaoConcentração {
+    BaseLevel 1..39
+    Zeny > 10000
+    timeout 1800
+    call usaPocaoDaConcentracao
+    exclusive 1
+	ConfigKeyNot PoçãoDeVelocidade Concentração
+}
+
+automacro configurarPocaoDespertar {
+    BaseLevel 40..84
+    Zeny > 20000
+    timeout 1800
+    call usaPocaoDoDespertar
+    exclusive 1
+	ConfigKeyNot PoçãoDeVelocidade Despertar
+}
+
+automacro configurarPocaoFúriaSelvagem {
+    BaseLevel >= 85
+    Zeny > 30000
+    timeout 1800
+    call usaPocaoDaFuriaSelvagem
+    exclusive 1
+	ConfigKeyNot PoçãoDeVelocidade Fúria
+}
+
+macro usaPocaoDaConcentracao {
+    log Configurando: Poção da Concentração
+    do conf useSelf_item_2 Poção da Concentração
+    do conf useSelf_item_2_disabled 0
+    do conf useSelf_item_2_inInventory Poção da Concentração > 0
+    do conf useSelf_item_2_whenStatusInactive EFST_ATTHASTE_POTION1
+
+    do conf buyAuto_2 Poção da Concentração
+    do conf buyAuto_2_minAmount 1
+    do conf buyAuto_2_maxAmount 7
+    do conf buyAuto_2_disabled 0
+    do conf buyAuto_2_npc payon_in01 5 49 # ajuste esse NPC
+
+    log Atualizando items_control
+    do iconf 645 7 1 0
+	do iconf 656 0 1 0
+	do iconf 657 0 1 0
+	do conf PoçãoDeVelocidade Concentração
+}
+
+macro usaPocaoDoDespertar {
+    log Configurando: Poção do Despertar
+    do conf useSelf_item_2 Poção do Despertar
+    do conf useSelf_item_2_inInventory Poção do Despertar > 0
+    do conf useSelf_item_2_whenStatusInactive EFST_ATTHASTE_POTION2
+
+    do conf buyAuto_2 Poção do Despertar
+    do conf buyAuto_2_minAmount 1
+    do conf buyAuto_2_maxAmount 7
+    do conf buyAuto_2_disabled 0
+    do conf buyAuto_2_npc payon_in01 5 49 # ajuste esse NPC
+
+    log Atualizando items_control
+    do iconf 645 0 1 0
+	do iconf 656 7 1 0
+	do iconf 657 0 1 0
+	do conf PoçãoDeVelocidade Despertar
+}
+
+macro usaPocaoDaFuriaSelvagem {
+    log Configurando: Poção da Fúria Selvagem
+    do conf useSelf_item_2 Poção da Fúria Selvagem
+    do conf useSelf_item_2_disabled 0
+    do conf useSelf_item_2_inInventory Poção da Fúria Selvagem > 0
+    do conf useSelf_item_2_whenStatusInactive EFST_ATTHASTE_POTION3
+
+    do conf buyAuto_2 Poção da Fúria Selvagem
+    do conf buyAuto_2_minAmount 1
+    do conf buyAuto_2_maxAmount 7
+    do conf buyAuto_2_disabled 0
+    do conf buyAuto_2_npc cmd_in01 79 182 # Só tem em CMD e LHZ
+
+    log Atualizando items_control
+    do iconf 645 0 1 0
+	do iconf 656 0 1 0
+	do iconf 657 7 1 0
+	do conf PoçãoDeVelocidade Fúria
+}
