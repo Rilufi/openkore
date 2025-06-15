@@ -32,11 +32,8 @@ jobs:
           RO_PASSWORD: ${{ secrets.RO_PASSWORD }}
           RO_PIN: ${{ secrets.RO_PIN }}
 
-      - name: Compilar XSTools com scons
-        run: |
-          cd src
-          python3 scons-local-*/scons.py
-          cd ..
+      - name: Compilar XSTools com scons (a partir da raiz)
+        run: python3 src/scons-local-*/scons.py
 
       - name: Executar OpenKore
         run: perl openkore.pl
